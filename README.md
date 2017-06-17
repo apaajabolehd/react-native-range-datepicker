@@ -2,7 +2,7 @@
 
 This is my first npm package, inspired by Airbnb datepicker.
 
-![react-native-range-datepicker in action](https://raw.githubusercontent.com/apaajabolehd/react-native-range-datepicker/master/demo-datepicker.mp4)
+![react-native-range-datepicker in action](https://raw.githubusercontent.com/apaajabolehd/react-native-range-datepicker/master/demo-datepicker.gif)
 
 ### Install
 ```sh
