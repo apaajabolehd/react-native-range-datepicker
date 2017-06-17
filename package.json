@@ -12,6 +12,10 @@
     "range",
     "javascript"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/apaajabolehd/react-native-range-datepicker.git"
+  },
   "author": "Hanson Citra <hansoncitra@gmail.com>",
   "license": "ISC",
   "dependencies": {
