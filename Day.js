@@ -50,24 +50,20 @@ export default class Day extends React.Component {
 				textDayStyle = {color: dayProps.selectedTextColor};
 				todayDateStyle = {color: dayProps.selectedTextColor};
 				break;
+			case "disabled" :
+				textDayStyle = {color: '#ccc'};
 			default: break;
 		}
 
-		if(day.date)
-		{
-			if(day.date < moment().format("YYYYMMDD"))
+		if(day.date == moment().format("YYYYMMDD"))
+			todayDateStyle.fontWeight = 'bold';
+
+		if(day.date){
+			if(day.type == 'disabled')
 				return (
 					<TouchableWithoutFeedback activeOpacity={1} style={dayStyle}>
 						<View style={{...dayStyle, height: Math.floor(DEVICE_WIDTH / 7), justifyContent: 'center'}}>
-							<Text style={{color: '#ccc', textAlign: "center", width: Math.floor(DEVICE_WIDTH / 7), backgroundColor: 'transparent', fontSize: Math.floor(DEVICE_WIDTH / 26)}}>{moment(day.date, 'YYYYMMDD').date()}</Text>
-						</View>
-					</TouchableWithoutFeedback>
-				);
-			else if(day.date == moment().format("YYYYMMDD"))
-				return (
-					<TouchableWithoutFeedback activeOpacity={1} style={dayStyle} onPress={() => this.props.onSelectDate(moment(day.date, 'YYYYMMDD'))}>
-						<View style={{...dayStyle, height: Math.floor(DEVICE_WIDTH / 7), justifyContent: 'center'}}>
-							<Text style={{fontWeight: 'bold', ...todayDateStyle, textAlign: "center", width: Math.floor(DEVICE_WIDTH / 7), backgroundColor: 'transparent', fontSize: Math.floor(DEVICE_WIDTH / 26)}}>{moment(day.date, 'YYYYMMDD').date()}</Text>
+							<Text style={{...textDayStyle, textAlign: "center", width: Math.floor(DEVICE_WIDTH / 7), backgroundColor: 'transparent', fontSize: Math.floor(DEVICE_WIDTH / 26)}}>{moment(day.date, 'YYYYMMDD').date()}</Text>
 						</View>
 					</TouchableWithoutFeedback>
 				);

@@ -30,6 +30,7 @@ static defaultProps = {
 	showReset: true,
 	showClose: true,
 	onClose: () => {},
+	onSelect: () => {},
 	onConfirm: () => {},
 	placeHolderStart: 'Start Date',
 	placeHolderUntil: 'Until Date',
@@ -45,6 +46,7 @@ static defaultProps = {
 ```jsx
 static propTypes = {
 	dayHeadings: PropTypes.arrayOf(React.PropTypes.string),
+	availableDates: PropTypes.arrayOf(React.PropTypes.string),
 	maxMonth: PropTypes.number,
 	buttonColor: PropTypes.string,
 	buttonContainerStyle: PropTypes.object,
@@ -53,6 +55,7 @@ static propTypes = {
 	showReset: PropTypes.bool,
 	showClose: PropTypes.bool,
 	onClose: PropTypes.func,
+	onSelect: PropTypes.func,
 	onConfirm: PropTypes.func,
 	placeHolderStart: PropTypes.string,
 	placeHolderUntil: PropTypes.string,
@@ -61,6 +64,10 @@ static propTypes = {
 	todayColor: PropTypes.string,
 }
 ```
+
+### New Update
+- Available Dates
+
 
 Ok, that's all, easy right???
 

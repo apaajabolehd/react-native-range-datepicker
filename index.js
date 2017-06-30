@@ -27,6 +27,7 @@ export default class RangeDatepicker extends Component {
 		this.state = {
 			startDate: props.startDate && moment(props.startDate, 'DDMMYYYY'),
 			untilDate: props.untilDate && moment(props.untilDate, 'DDMMYYYY'),
+			availableDates: props.availableDates || null
 		}
 
 		this.onSelectDate = this.onSelectDate.bind(this);
@@ -43,6 +44,7 @@ export default class RangeDatepicker extends Component {
 		showReset: true,
 		showClose: true,
 		onClose: () => {},
+		onSelect: () => {},
 		onConfirm: () => {},
 		placeHolderStart: 'Start Date',
 		placeHolderUntil: 'Until Date',
@@ -56,6 +58,7 @@ export default class RangeDatepicker extends Component {
 
 	static propTypes = {
 		dayHeadings: PropTypes.arrayOf(React.PropTypes.string),
+		availableDates: PropTypes.arrayOf(React.PropTypes.string),
 		maxMonth: PropTypes.number,
 		buttonColor: PropTypes.string,
 		buttonContainerStyle: PropTypes.object,
@@ -64,6 +67,7 @@ export default class RangeDatepicker extends Component {
 		showReset: PropTypes.bool,
 		showClose: PropTypes.bool,
 		onClose: PropTypes.func,
+		onSelect: PropTypes.func,
 		onConfirm: PropTypes.func,
 		placeHolderStart: PropTypes.string,
 		placeHolderUntil: PropTypes.string,
@@ -72,28 +76,58 @@ export default class RangeDatepicker extends Component {
 		todayColor: PropTypes.string,
 	}
 
+	componentWillReceiveProps(nextProps) {
+		this.setState({availableDates: nextProps.availableDates});
+	}
+
 	onSelectDate(date){
-		if(!this.state.startDate)
-			this.setState({startDate : date});
-		else if(!this.state.untilDate)
+		let startDate = null;
+		let untilDate = null;
+		const { availableDates } = this.state;
+
+		if(this.state.startDate && !this.state.untilDate)
 		{
-			if(date.format('YYYYMMDD') > this.state.startDate.format('YYYYMMDD'))
-				this.setState({untilDate : date});
-			else if(date.format('YYYYMMDD') < this.state.startDate.format('YYYYMMDD'))
-				this.setState({untilDate : this.state.startDate, startDate : date});
-			else
-				this.setState({untilDate : null, startDate : null});
+			if(date.format('YYYYMMDD') < this.state.startDate.format('YYYYMMDD') || this.isInvalidRange(date)){
+				startDate = date;
+			}
+			else if(date.format('YYYYMMDD') > this.state.startDate.format('YYYYMMDD')){
+				startDate = this.state.startDate;
+				untilDate = date;
+			}
+			else{
+				startDate = null;
+				untilDate = null;
+			}
 		}
-		else{
-			// if(date.format('YYYYMMDD') == this.state.startDate.format('YYYYMMDD') || date.format('YYYYMMDD') == this.state.untilDate.format('YYYYMMDD'))
-			// 	return;
-			// if(Math.abs(date.diff(this.state.startDate, 'days')) == 1)
-			// 	this.setState({startDate : date});
-			// else if(Math.abs(date.diff(this.state.untilDate, 'days')) == 1)
-			// 	this.setState({untilDate : date});
-			// else
-				this.setState({startDate: date, untilDate : null});
+		else if(!this.isInvalidRange(date)) {
+			startDate = date;
 		}
+		else {
+			startDate = null;
+			untilDate = null;
+		}
+
+		this.setState({startDate, untilDate});
+		this.props.onSelect(startDate, untilDate);
+	}
+
+	isInvalidRange(date) {
+		const { startDate, untilDate, availableDates } = this.state;
+
+		if(availableDates && availableDates.length > 0){
+			//select endDate condition
+			if(startDate && !untilDate) {
+				for(let i = startDate.format('YYYYMMDD'); i <= date.format('YYYYMMDD'); i = moment(i, 'YYYYMMDD').add(1, 'days').format('YYYYMMDD')){
+					if(availableDates.indexOf(i) == -1 && startDate.format('YYYYMMDD') != i)
+						return true;
+				}
+			}
+			//select startDate condition
+			else if(availableDates.indexOf(date.format('YYYYMMDD')) == -1)
+				return true;
+		}
+
+		return false;
 	}
 
 	getMonthStack(){
@@ -111,6 +145,8 @@ export default class RangeDatepicker extends Component {
 			startDate: null,
 			untilDate: null,
 		});
+
+		this.props.onSelect(null, null);
 	}
 
 	handleConfirmDate(){
@@ -119,11 +155,21 @@ export default class RangeDatepicker extends Component {
 
 	handleRenderRow(month) {
 		const { selectedBackgroundColor, selectedTextColor, todayColor } = this.props;
+		let { availableDates, startDate, untilDate } = this.state;
+
+		if(availableDates && availableDates.length > 0){
+			availableDates = availableDates.filter(function(d){
+				if(d.indexOf(month) >= 0)
+					return true;
+			});
+		}
+
 		return (
 			<Month
 				onSelectDate={this.onSelectDate}
-				startDate={this.state.startDate}
-				untilDate={this.state.untilDate}
+				startDate={startDate}
+				untilDate={untilDate}
+				availableDates={availableDates}
 				dayProps={{selectedBackgroundColor, selectedTextColor, todayColor}}
 				month={month} />
 		)
@@ -131,7 +177,6 @@ export default class RangeDatepicker extends Component {
 
 	render(){
 		const monthStack = this.ds.cloneWithRows(this.getMonthStack());
-
 			return (
 				<View style={{backgroundColor: '#fff', zIndex: 1000, alignSelf: 'center'}}>
 					{
