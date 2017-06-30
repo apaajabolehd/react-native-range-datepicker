@@ -15,6 +15,11 @@ export default class Month extends React.Component {
 	}
 
 	shouldComponentUpdate(nextProps, nextState) {
+
+		if(nextProps.availableDates != this.props.availableDates){
+			return true;
+		}
+
 		if(nextProps.startDate && nextProps.startDate.format("YYYYMM") == nextProps.month)
 			return true;
 
@@ -45,7 +50,7 @@ export default class Month extends React.Component {
 		let dayColumn = [];
 		let dayRow = [];
 		let dayObject = {};
-		let {startDate, untilDate} = this.props;
+		let {startDate, untilDate, availableDates} = this.props;
 
 		do{
 			dayColumn = [];
@@ -56,6 +61,12 @@ export default class Month extends React.Component {
 				};
 				if(i == currDate.days() && currDate.month() == currMonth)
 				{
+					if(currDate.format("YYYYMMDD") < moment().format("YYYYMMDD")){
+						dayObject.type = 'disabled';
+					}
+					if(availableDates && availableDates.indexOf(currDate.format("YYYYMMDD")) == -1){
+						dayObject.type = 'disabled';
+					}
 					if(startDate && startDate.format('YYYYMMDD') == currDate.format('YYYYMMDD')){
 						if(!untilDate)
 							dayObject.type = 'single';
@@ -77,7 +88,7 @@ export default class Month extends React.Component {
 				else{
 					if(startDate && untilDate &&
 						(
-							startDate.format('YYYYMMDD') < currDate.format('YYYYMMDD') && 
+							startDate.format('YYYYMMDD') < currDate.format('YYYYMMDD')  && 
 							untilDate.format('YYYYMMDD') >= currDate.format('YYYYMMDD')
 						)
 					)
@@ -103,7 +114,7 @@ export default class Month extends React.Component {
 					{
 						dayStack.map((days, i) => {
 							return (
-								<DayRow days={days} dayProps={dayProps} key={i} onSelectDate={this.props.onSelectDate} />
+								<DayRow days={days} dayProps={dayProps} key={i} onSelectDate={this.props.onSelectDate}/>
 							)
 						})
 					}
