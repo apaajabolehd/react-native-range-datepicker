@@ -25,7 +25,7 @@ export default class Day extends React.Component {
 
 	render() {
 		let {day, dayProps} = this.props;
-		let dayStyle = {backgroundColor : 'transparent'};
+		let dayStyle = {backgroundColor : 'transparent', position: 'relative'};
 		let textDayStyle = {color: 'black'};
 		let todayDateStyle = {color: dayProps.todayColor};
 
@@ -51,7 +51,7 @@ export default class Day extends React.Component {
 				todayDateStyle = {color: dayProps.selectedTextColor};
 				break;
 			case "disabled" :
-				textDayStyle = {color: '#ccc'};
+				textDayStyle = {color: '#999'};
 			default: break;
 		}
 
@@ -64,6 +64,7 @@ export default class Day extends React.Component {
 					<TouchableWithoutFeedback activeOpacity={1} style={dayStyle}>
 						<View style={{...dayStyle, height: Math.floor(DEVICE_WIDTH / 7), justifyContent: 'center'}}>
 							<Text style={{...textDayStyle, textAlign: "center", width: Math.floor(DEVICE_WIDTH / 7), backgroundColor: 'transparent', fontSize: Math.floor(DEVICE_WIDTH / 26)}}>{moment(day.date, 'YYYYMMDD').date()}</Text>
+							<View style={{position: 'absolute', top:0, bottom:0, left:0, right: 0, justifyContent: 'center'}}><Text style={{fontSize: Math.floor(DEVICE_WIDTH / 17), color: '#ccc', textAlign: 'center'}}>\</Text></View>
 						</View>
 					</TouchableWithoutFeedback>
 				);
