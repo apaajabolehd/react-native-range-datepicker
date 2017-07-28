@@ -43,6 +43,7 @@ export default class RangeDatepicker extends Component {
 		buttonContainerStyle: {},
 		showReset: true,
 		showClose: true,
+		ignoreMinDate: false,
 		onClose: () => {},
 		onSelect: () => {},
 		onConfirm: () => {},
@@ -52,7 +53,8 @@ export default class RangeDatepicker extends Component {
 		selectedTextColor: 'white',
 		todayColor: 'green',
 		startDate: '',
-		untilDate: ''
+		untilDate: '',
+		minDate: '',
 	};
 
 
@@ -64,8 +66,10 @@ export default class RangeDatepicker extends Component {
 		buttonContainerStyle: PropTypes.object,
 		startDate: PropTypes.string,
 		untilDate: PropTypes.string,
+		minDate: PropTypes.string,
 		showReset: PropTypes.bool,
 		showClose: PropTypes.bool,
+		ignoreMinDate: PropTypes.bool,
 		onClose: PropTypes.func,
 		onSelect: PropTypes.func,
 		onConfirm: PropTypes.func,
@@ -154,7 +158,7 @@ export default class RangeDatepicker extends Component {
 	}
 
 	handleRenderRow(month) {
-		const { selectedBackgroundColor, selectedTextColor, todayColor } = this.props;
+		const { selectedBackgroundColor, selectedTextColor, todayColor, minDate, ignoreMinDate } = this.props;
 		let { availableDates, startDate, untilDate } = this.state;
 
 		if(availableDates && availableDates.length > 0){
@@ -170,6 +174,8 @@ export default class RangeDatepicker extends Component {
 				startDate={startDate}
 				untilDate={untilDate}
 				availableDates={availableDates}
+				minDate={minDate}
+				ignoreMinDate={ignoreMinDate}
 				dayProps={{selectedBackgroundColor, selectedTextColor, todayColor}}
 				month={month} />
 		)

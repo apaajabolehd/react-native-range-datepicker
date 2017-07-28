@@ -51,6 +51,7 @@ export default class Day extends React.Component {
 				todayDateStyle = {color: dayProps.selectedTextColor};
 				break;
 			case "disabled" :
+			case "blockout" :
 				textDayStyle = {color: '#999'};
 			default: break;
 		}
@@ -60,6 +61,14 @@ export default class Day extends React.Component {
 
 		if(day.date){
 			if(day.type == 'disabled')
+				return (
+					<TouchableWithoutFeedback activeOpacity={1} style={dayStyle}>
+						<View style={{...dayStyle, height: Math.floor(DEVICE_WIDTH / 7), justifyContent: 'center'}}>
+							<Text style={{...textDayStyle, textAlign: "center", width: Math.floor(DEVICE_WIDTH / 7), backgroundColor: 'transparent', fontSize: Math.floor(DEVICE_WIDTH / 26)}}>{moment(day.date, 'YYYYMMDD').date()}</Text>
+						</View>
+					</TouchableWithoutFeedback>
+				);
+			else if(day.type == 'blockout')
 				return (
 					<TouchableWithoutFeedback activeOpacity={1} style={dayStyle}>
 						<View style={{...dayStyle, height: Math.floor(DEVICE_WIDTH / 7), justifyContent: 'center'}}>

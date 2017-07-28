@@ -50,7 +50,7 @@ export default class Month extends React.Component {
 		let dayColumn = [];
 		let dayRow = [];
 		let dayObject = {};
-		let {startDate, untilDate, availableDates} = this.props;
+		let {startDate, untilDate, availableDates, minDate, ignoreMinDate} = this.props;
 
 		do{
 			dayColumn = [];
@@ -61,11 +61,13 @@ export default class Month extends React.Component {
 				};
 				if(i == currDate.days() && currDate.month() == currMonth)
 				{
-					if(currDate.format("YYYYMMDD") < moment().format("YYYYMMDD")){
-						dayObject.type = 'disabled';
-					}
 					if(availableDates && availableDates.indexOf(currDate.format("YYYYMMDD")) == -1){
-						dayObject.type = 'disabled';
+						dayObject.type = 'blockout';
+					}
+					if(minDate && currDate.format("YYYYMMDD") < minDate){
+						if(startDate && startDate.format('YYYYMMDD') > currDate.format("YYYYMMDD") && currDate.format("YYYYMMDD") > moment().format("YYYYMMDD") && ignoreMinDate){}
+						else
+							dayObject.type = 'disabled';
 					}
 					if(startDate && startDate.format('YYYYMMDD') == currDate.format('YYYYMMDD')){
 						if(!untilDate)
