@@ -29,6 +29,7 @@ static defaultProps = {
 	buttonContainerStyle: {},
 	showReset: true,
 	showClose: true,
+	ignoreMinDate: false,
 	onClose: () => {},
 	onSelect: () => {},
 	onConfirm: () => {},
@@ -38,7 +39,12 @@ static defaultProps = {
 	selectedTextColor: 'white',
 	todayColor: 'green',
 	startDate: '',
-	untilDate: ''
+	untilDate: '',
+	minDate: '',
+	maxDate: '',
+	infoText: '',
+	infoStyle: {color: '#fff', fontSize: 13},
+	infoContainerStyle: {marginRight: 20, paddingHorizontal: 20, paddingVertical: 5, backgroundColor: 'green', borderRadius: 20, alignSelf: 'flex-end'}
 };
 ```
 
@@ -52,8 +58,11 @@ static propTypes = {
 	buttonContainerStyle: PropTypes.object,
 	startDate: PropTypes.string,
 	untilDate: PropTypes.string,
+	minDate: PropTypes.string,
+	maxDate: PropTypes.string,
 	showReset: PropTypes.bool,
 	showClose: PropTypes.bool,
+	ignoreMinDate: PropTypes.bool,
 	onClose: PropTypes.func,
 	onSelect: PropTypes.func,
 	onConfirm: PropTypes.func,
@@ -62,11 +71,17 @@ static propTypes = {
 	selectedBackgroundColor: PropTypes.string,
 	selectedTextColor: PropTypes.string,
 	todayColor: PropTypes.string,
+	infoText: PropTypes.string,
+	infoStyle: PropTypes.object,
+	infoContainerStyle: PropTypes.object
 }
 ```
 
 ### New Update
-- Available Dates
+- Available Dates (enable only available date, eg: ["20170620","20170621","20170622","20170623"])
+- Min. Date (minimum date, disabled all date before minDate, eg: "20170620")
+- Max. Date (maximum date, disabled all date after maxDate, eg: "20170630")
+- Ignore Min. Date (ignore minimum date, allow to change startdate even though the selected date is lower than minDate)
 
 
 Ok, that's all, easy right???

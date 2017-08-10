@@ -16,9 +16,14 @@ export default class Month extends React.Component {
 
 	shouldComponentUpdate(nextProps, nextState) {
 
-		if(nextProps.availableDates != this.props.availableDates){
+		if(nextProps.minDate != this.props.minDate)
 			return true;
-		}
+
+		if(nextProps.maxDate != this.props.maxDate)
+			return true;
+
+		if(nextProps.availableDates != this.props.availableDates)
+			return true;
 
 		if(nextProps.startDate && nextProps.startDate.format("YYYYMM") == nextProps.month)
 			return true;
@@ -50,7 +55,7 @@ export default class Month extends React.Component {
 		let dayColumn = [];
 		let dayRow = [];
 		let dayObject = {};
-		let {startDate, untilDate, availableDates, minDate, ignoreMinDate} = this.props;
+		let {startDate, untilDate, availableDates, minDate, maxDate, ignoreMinDate} = this.props;
 
 		do{
 			dayColumn = [];
@@ -61,13 +66,17 @@ export default class Month extends React.Component {
 				};
 				if(i == currDate.days() && currDate.month() == currMonth)
 				{
-					if(availableDates && availableDates.indexOf(currDate.format("YYYYMMDD")) == -1){
-						dayObject.type = 'blockout';
-					}
 					if(minDate && currDate.format("YYYYMMDD") < minDate){
 						if(startDate && startDate.format('YYYYMMDD') > currDate.format("YYYYMMDD") && currDate.format("YYYYMMDD") > moment().format("YYYYMMDD") && ignoreMinDate){}
-						else
+						else{
 							dayObject.type = 'disabled';
+						}
+					}
+					if(maxDate && currDate.format("YYYYMMDD") > maxDate){
+						dayObject.type = 'disabled';
+					}
+					if(availableDates && availableDates.indexOf(currDate.format("YYYYMMDD")) == -1){
+						dayObject.type = 'blockout';
 					}
 					if(startDate && startDate.format('YYYYMMDD') == currDate.format('YYYYMMDD')){
 						if(!untilDate)

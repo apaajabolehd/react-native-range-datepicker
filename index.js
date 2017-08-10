@@ -55,6 +55,10 @@ export default class RangeDatepicker extends Component {
 		startDate: '',
 		untilDate: '',
 		minDate: '',
+		maxDate: '',
+		infoText: '',
+		infoStyle: {color: '#fff', fontSize: 13},
+		infoContainerStyle: {marginRight: 20, paddingHorizontal: 20, paddingVertical: 5, backgroundColor: 'green', borderRadius: 20, alignSelf: 'flex-end'}
 	};
 
 
@@ -67,6 +71,7 @@ export default class RangeDatepicker extends Component {
 		startDate: PropTypes.string,
 		untilDate: PropTypes.string,
 		minDate: PropTypes.string,
+		maxDate: PropTypes.string,
 		showReset: PropTypes.bool,
 		showClose: PropTypes.bool,
 		ignoreMinDate: PropTypes.bool,
@@ -78,6 +83,9 @@ export default class RangeDatepicker extends Component {
 		selectedBackgroundColor: PropTypes.string,
 		selectedTextColor: PropTypes.string,
 		todayColor: PropTypes.string,
+		infoText: PropTypes.string,
+		infoStyle: PropTypes.object,
+		infoContainerStyle: PropTypes.object
 	}
 
 	componentWillReceiveProps(nextProps) {
@@ -158,7 +166,7 @@ export default class RangeDatepicker extends Component {
 	}
 
 	handleRenderRow(month) {
-		const { selectedBackgroundColor, selectedTextColor, todayColor, minDate, ignoreMinDate } = this.props;
+		const { selectedBackgroundColor, selectedTextColor, todayColor, minDate, maxDate, ignoreMinDate } = this.props;
 		let { availableDates, startDate, untilDate } = this.state;
 
 		if(availableDates && availableDates.length > 0){
@@ -175,6 +183,7 @@ export default class RangeDatepicker extends Component {
 				untilDate={untilDate}
 				availableDates={availableDates}
 				minDate={minDate}
+				maxDate={maxDate}
 				ignoreMinDate={ignoreMinDate}
 				dayProps={{selectedBackgroundColor, selectedTextColor, todayColor}}
 				month={month} />
@@ -198,7 +207,7 @@ export default class RangeDatepicker extends Component {
 							:
 							null
 					}
-					<View style={{ flexDirection: 'row', justifyContent: "space-between", padding: 20, paddingTop: 0, alignItems: 'center'}}>
+					<View style={{ flexDirection: 'row', justifyContent: "space-between", paddingHorizontal: 20, paddingBottom: 5, alignItems: 'center'}}>
 						<View style={{flex: 1}}>
 							<Text style={{fontSize: 34, color: '#666'}}>
 								{ this.state.startDate ? moment(this.state.startDate).format("MMM DD YYYY") : this.props.placeHolderStart}
@@ -217,6 +226,12 @@ export default class RangeDatepicker extends Component {
 							</Text>
 						</View>
 					</View>
+					{
+						this.props.infoText != "" && 
+						<View style={this.props.infoContainerStyle}>
+							<Text style={this.props.infoStyle}>{this.props.infoText}</Text>
+						</View>
+					}
 					<View style={styles.dayHeader}>
 						{
 							this.props.dayHeadings.map((day, i) => {
@@ -244,7 +259,8 @@ const styles = StyleSheet.create({
 	dayHeader : { 
 		flexDirection: 'row', 
 		borderBottomWidth: 1, 
-		paddingBottom: 10
+		paddingBottom: 10,
+		paddingTop: 10,
 	},
 	buttonWrapper : {
 		paddingVertical: 10, 
