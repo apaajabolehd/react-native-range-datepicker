@@ -82,6 +82,7 @@ static propTypes = {
 - Min. Date (minimum date, disabled all date before minDate, eg: "20170620")
 - Max. Date (maximum date, disabled all date after maxDate, eg: "20170630")
 - Ignore Min. Date (ignore minimum date, allow to change startdate even though the selected date is lower than minDate)
+- Info (just a text info, has 3 props, infoText, infoStyle, infoContainerStyle)
 
 
 Ok, that's all, easy right???
