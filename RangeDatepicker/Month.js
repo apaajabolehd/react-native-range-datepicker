@@ -66,13 +66,13 @@ export default class Month extends React.Component {
 				};
 				if(i == currDate.days() && currDate.month() == currMonth)
 				{
-					if(minDate && currDate.format("YYYYMMDD") < minDate){
+					if(minDate && minDate.format("YYYYMMDD") && currDate.format("YYYYMMDD") < minDate.format("YYYYMMDD")){
 						if(startDate && startDate.format('YYYYMMDD') > currDate.format("YYYYMMDD") && currDate.format("YYYYMMDD") > moment().format("YYYYMMDD") && ignoreMinDate){}
 						else{
 							dayObject.type = 'disabled';
 						}
 					}
-					if(maxDate && currDate.format("YYYYMMDD") > maxDate){
+					if(maxDate && maxDate.format("YYYYMMDD") && currDate.format("YYYYMMDD") > maxDate.format("YYYYMMDD")){
 						dayObject.type = 'disabled';
 					}
 					if(availableDates && availableDates.indexOf(currDate.format("YYYYMMDD")) == -1){
