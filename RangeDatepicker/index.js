@@ -22,13 +22,10 @@ const DEVICE_WIDTH = Dimensions.get('window').width;
 export default class RangeDatepicker extends Component {
 	constructor(props) {
 		super(props);
-
     	this.ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 != r2});
 		this.state = {
 			startDate: props.startDate && moment(props.startDate, 'YYYYMMDD'),
 			untilDate: props.untilDate && moment(props.untilDate, 'YYYYMMDD'),
-			minDate: props.minDate && moment(props.minDate, 'YYYYMMDD'),
-			maxDate: props.maxDate && moment(props.maxDate, 'YYYYMMDD'),
 			availableDates: props.availableDates || null
 		}
 
@@ -39,6 +36,7 @@ export default class RangeDatepicker extends Component {
 	}
 
 	static defaultProps = {
+		initialMonth: '',
 		dayHeadings: ['S', 'M', 'T', 'W', 'T', 'F', 'S'],
 		maxMonth: 12,
 		buttonColor: 'green',
@@ -65,6 +63,7 @@ export default class RangeDatepicker extends Component {
 
 
 	static propTypes = {
+		initialMonth: PropTypes.string,
 		dayHeadings: PropTypes.arrayOf(React.PropTypes.string),
 		availableDates: PropTypes.arrayOf(React.PropTypes.string),
 		maxMonth: PropTypes.number,
@@ -146,9 +145,13 @@ export default class RangeDatepicker extends Component {
 
 	getMonthStack(){
 		let res = [];
-		const { maxMonth } = this.props;
+		const { maxMonth, initialMonth } = this.props;
+		let initMonth = moment();
+		if(initialMonth && initialMonth != '')
+			initMonth = moment(initialMonth, 'YYYYMM');
+
 		for(let i = 0; i < maxMonth; i++){
-			res.push(moment().add(i, 'month').format('YYYYMM'));
+			res.push(initMonth.clone().add(i, 'month').format('YYYYMM'));
 		}
 
 		return res;
@@ -168,8 +171,10 @@ export default class RangeDatepicker extends Component {
 	}
 
 	handleRenderRow(month) {
-		const { selectedBackgroundColor, selectedTextColor, todayColor, ignoreMinDate } = this.props;
-		let { availableDates, startDate, untilDate, minDate, maxDate } = this.state;
+		const { selectedBackgroundColor, selectedTextColor, todayColor, ignoreMinDate, minDate, maxDate } = this.props;
+		let { availableDates, startDate, untilDate } = this.state;
+
+
 
 		if(availableDates && availableDates.length > 0){
 			availableDates = availableDates.filter(function(d){
@@ -184,8 +189,8 @@ export default class RangeDatepicker extends Component {
 				startDate={startDate}
 				untilDate={untilDate}
 				availableDates={availableDates}
-				minDate={minDate}
-				maxDate={maxDate}
+				minDate={minDate ? moment(minDate, 'YYYYMMDD') : minDate}
+				maxDate={maxDate ? moment(maxDate, 'YYYYMMDD') : maxDate}
 				ignoreMinDate={ignoreMinDate}
 				dayProps={{selectedBackgroundColor, selectedTextColor, todayColor}}
 				month={month} />
