@@ -19,6 +19,9 @@
   "author": "Hanson Citra <hansoncitra@gmail.com>",
   "license": "ISC",
   "dependencies": {
-    "moment": "^2.17.1"
+    "moment": "^2.17.1",
+    "prop-types": "^15.6.0",
+    "react": "^15.6.1",
+    "react-native": "^0.44.0"
   }
 }
