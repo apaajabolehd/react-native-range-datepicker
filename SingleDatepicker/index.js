@@ -53,8 +53,8 @@ export default class RangeDatepicker extends Component {
 
 	static propTypes = {
 		initialMonth: PropTypes.string,
-		dayHeadings: PropTypes.arrayOf(React.PropTypes.string),
-		availableDates: PropTypes.arrayOf(React.PropTypes.string),
+		dayHeadings: PropTypes.arrayOf(PropTypes.string),
+		availableDates: PropTypes.arrayOf(PropTypes.string),
 		maxMonth: PropTypes.number,
 		minDate: PropTypes.string,
 		maxDate: PropTypes.string,
