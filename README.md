@@ -24,59 +24,95 @@ import DatepickerRange from 'react-native-range-datepicker';
 ### Default props RangeDatepicker
 ```jsx
 static defaultProps = {
-	initialMonth: '',
-	dayHeadings: ['S', 'M', 'T', 'W', 'T', 'F', 'S'],
-	maxMonth: 12,
-	buttonColor: 'green',
-	buttonContainerStyle: {},
-	showReset: true,
-	showClose: true,
-	ignoreMinDate: false,
-	onClose: () => {},
-	onSelect: () => {},
-	onConfirm: () => {},
-	placeHolderStart: 'Start Date',
-	placeHolderUntil: 'Until Date',
-	selectedBackgroundColor: 'green',
-	selectedTextColor: 'white',
-	todayColor: 'green',
-	startDate: '',
-	untilDate: '',
-	minDate: '',
-	maxDate: '',
-	infoText: '',
-	infoStyle: {color: '#fff', fontSize: 13},
-	infoContainerStyle: {marginRight: 20, paddingHorizontal: 20, paddingVertical: 5, backgroundColor: 'green', borderRadius: 20, alignSelf: 'flex-end'}
+    monthProps: {
+		titleFormat: 'MMMM YYYY',
+		titleStyle: { fontSize: 20, padding: 20 },
+		dayHeaderProps: {},
+		showDaysHeader: false,
+		capitalizeTitle: false,
+    },
+    initialMonth: '',
+    dayHeadings: ['S', 'M', 'T', 'W', 'T', 'F', 'S'],
+    dayHeaderStyle: {},
+    dayHeaderContainerStyle: {},
+    maxMonth: 12,
+    buttonColor: 'green',
+    buttonContainerStyle: {},
+    flatListProps: {},
+    monthProps: {},
+    showReset: true,
+    showClose: true,
+    showConfirmButton: true,
+    showSelectedRange: true,
+    showsVerticalScrollIndicator: false,
+    showDaysHeader: true,
+    ignoreMinDate: false,
+    dayContainerOffset: 0,
+    onClose: () => {},
+    onSelect: () => {},
+    onConfirm: () => {},
+    placeHolderStart: 'Start Date',
+    placeHolderUntil: 'Until Date',
+    selectedBackgroundColor: 'green',
+    selectedTextColor: 'white',
+    dayBackgroundColor: '',
+    dayTextColor: '',
+    pointBackgroundColor: '',
+    pointTextColor: '',
+    todayColor: 'green',
+    startDate: '',
+    untilDate: '',
+    minDate: '',
+    maxDate: '',
+    infoText: '',
+    infoStyle: {color: '#fff', fontSize: 13},
+    infoContainerStyle: {marginRight: 20, paddingHorizontal: 20, paddingVertical: 5, backgroundColor: 'green', borderRadius: 20, alignSelf: 'flex-end'}
 };
 ```
 
 ### Proptypes RangeDatepicker
 ```jsx
 static propTypes = {
-	initialMonth: PropTypes.string,
-	dayHeadings: PropTypes.arrayOf(React.PropTypes.string),
-	availableDates: PropTypes.arrayOf(React.PropTypes.string),
-	maxMonth: PropTypes.number,
-	buttonColor: PropTypes.string,
-	buttonContainerStyle: PropTypes.object,
-	startDate: PropTypes.string,
-	untilDate: PropTypes.string,
-	minDate: PropTypes.string,
-	maxDate: PropTypes.string,
-	showReset: PropTypes.bool,
-	showClose: PropTypes.bool,
-	ignoreMinDate: PropTypes.bool,
-	onClose: PropTypes.func,
-	onSelect: PropTypes.func,
-	onConfirm: PropTypes.func,
-	placeHolderStart: PropTypes.string,
-	placeHolderUntil: PropTypes.string,
-	selectedBackgroundColor: PropTypes.string,
-	selectedTextColor: PropTypes.string,
-	todayColor: PropTypes.string,
-	infoText: PropTypes.string,
-	infoStyle: PropTypes.object,
-	infoContainerStyle: PropTypes.object
+    monthProps: PropTypes.shape({
+        titleFormat: PropTypes.string,
+        titleStyle: PropTypes.object,
+    }),
+    initialMonth: PropTypes.string,
+    dayHeadings: PropTypes.arrayOf(PropTypes.string),
+    availableDates: PropTypes.arrayOf(PropTypes.string),
+    maxMonth: PropTypes.number,
+    buttonColor: PropTypes.string,
+    flatListProps: PropTypes.object,
+    dayHeaderStyle: PropTypes.object,
+    dayHeaderContainerStyle: PropTypes.object,
+    buttonContainerStyle: PropTypes.object,
+    monthProps: PropTypes.object,
+    startDate: PropTypes.string,
+    untilDate: PropTypes.string,
+    minDate: PropTypes.string,
+    maxDate: PropTypes.string,
+    showReset: PropTypes.bool,
+    showClose: PropTypes.bool,
+    dayContainerOffset: PropTypes.number,
+    showConfirmButton: PropTypes.bool,
+    showSelectedRange: PropTypes.bool,
+    showsVerticalScrollIndicator: PropTypes.bool,
+    ignoreMinDate: PropTypes.bool,
+    onClose: PropTypes.func,
+    onSelect: PropTypes.func,
+    onConfirm: PropTypes.func,
+    placeHolderStart: PropTypes.string,
+    placeHolderUntil: PropTypes.string,
+    selectedBackgroundColor: PropTypes.string,
+    selectedTextColor: PropTypes.string,
+    dayBackgroundColor: PropTypes.string,
+    dayTextColor: PropTypes.string,
+    pointBackgroundColor: PropTypes.string,
+    pointTextColor: PropTypes.string,
+    todayColor: PropTypes.string,
+    infoText: PropTypes.string,
+    infoStyle: PropTypes.object,
+    infoContainerStyle: PropTypes.object
 }
 ```
 
@@ -90,6 +126,23 @@ import {SingleDatepicker} from 'react-native-range-datepicker';
 />
 ```
 
+### How to set fist day of week
+```js
+
+import 'moment/locale/en-gb';
+moment.locale("en-gb");
+
+```
+
+### How to set days heades 
+```js
+
+const dayHeadings =
+    [...Array(7).keys()]
+        .map(day => moment().weekday(day).format('dd'))
+        .map(_capitalize);
+
+```
 
 ### Default props SingleDatepicker
 ```jsx

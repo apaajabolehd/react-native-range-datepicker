@@ -1,15 +1,37 @@
 'use strict'
 import React from 'react';
+import PropTypes from 'prop-types';
 import {
 	View,
 	StyleSheet,
 	ScrollView,
 	Text
 } from 'react-native';
-import DayRow from './DayRow'
+import DayRow from './DayRow';
+import DayHeader from './DayHeader';
 import moment from 'moment'
 
+function capitalize(str){
+	return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
 export default class Month extends React.Component {
+	static defaultProps = {
+		titleFormat: 'MMMM YYYY',
+		titleStyle: { fontSize: 20, padding: 20 },
+		dayHeaderProps: {},
+		showDaysHeader: false,
+		capitalizeTitle: false,
+	};
+
+	static propTypes = {
+		titleFormat: PropTypes.string,
+		titleStyle: PropTypes.object,
+		dayHeaderProps: PropTypes.object,
+		showDaysHeader:  PropTypes.bool,
+		capitalizeTitle:  PropTypes.bool,
+	};
+
 	constructor(props) {
 		super(props);
 	}
@@ -64,7 +86,7 @@ export default class Month extends React.Component {
 					type : null,
 					date: null
 				};
-				if(i == currDate.days() && currDate.month() == currMonth)
+				if(i == currDate.weekday() && currDate.month() == currMonth)
 				{
 					if(minDate && minDate.format("YYYYMMDD") && currDate.format("YYYYMMDD") < minDate.format("YYYYMMDD")){
 						if(startDate && startDate.format('YYYYMMDD') > currDate.format("YYYYMMDD") && currDate.format("YYYYMMDD") > moment().format("YYYYMMDD") && ignoreMinDate){}
@@ -116,11 +138,19 @@ export default class Month extends React.Component {
 	}
 
 	render() {
-		const { month, dayProps } = this.props;
+		const { month, dayProps, titleStyle, titleFormat, capitalizeTitle, dayHeaderProps } = this.props;
 		const dayStack = this.getDayStack(moment(month, 'YYYYMM'));
 		return (
 			<View>
-				<Text style={{fontSize: 20, padding: 20}}>{moment(month, 'YYYYMM').format("MMMM YYYY")}</Text>
+				<Text style={titleStyle}>
+					{capitalizeTitle ?
+						capitalize(moment(month, 'YYYYMM').format(titleFormat)) :
+						moment(month, 'YYYYMM').format(titleFormat)
+					}
+				</Text>
+				{this.props.showDaysHeader && (
+					<DayHeader {...dayHeaderProps} />
+				)}
 				<View>
 					{
 						dayStack.map((days, i) => {
