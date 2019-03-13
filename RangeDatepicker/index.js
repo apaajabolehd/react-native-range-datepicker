@@ -78,7 +78,7 @@ export default class RangeDatepicker extends Component {
 		showReset: PropTypes.bool,
 		showClose: PropTypes.bool,
 		ignoreMinDate: PropTypes.bool,
-    isHistorical: propTypes.bool,
+    isHistorical: PropTypes.bool,
 		onClose: PropTypes.func,
 		onSelect: PropTypes.func,
 		onConfirm: PropTypes.func,
