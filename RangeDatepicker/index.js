@@ -45,6 +45,7 @@ export default class RangeDatepicker extends Component {
 		showReset: true,
 		showClose: true,
 		ignoreMinDate: false,
+    isHistorical: false,
 		onClose: () => {},
 		onSelect: () => {},
 		onConfirm: () => {},
@@ -77,6 +78,7 @@ export default class RangeDatepicker extends Component {
 		showReset: PropTypes.bool,
 		showClose: PropTypes.bool,
 		ignoreMinDate: PropTypes.bool,
+    isHistorical: propTypes.bool,
 		onClose: PropTypes.func,
 		onSelect: PropTypes.func,
 		onConfirm: PropTypes.func,
@@ -146,13 +148,19 @@ export default class RangeDatepicker extends Component {
 
 	getMonthStack(){
 		let res = [];
-		const { maxMonth, initialMonth } = this.props;
+		const { maxMonth, initialMonth, isHistorical } = this.props;
 		let initMonth = moment();
 		if(initialMonth && initialMonth != '')
 			initMonth = moment(initialMonth, 'YYYYMM');
 
 		for(let i = 0; i < maxMonth; i++){
-			res.push(initMonth.clone().add(i, 'month').format('YYYYMM'));
+			res.push(
+        !isHistorical ? (
+          initMonth.clone().add(i, 'month').format('YYYYMM')
+        ) : (
+          initMonth.clone().subtract(i, 'month').format('YYYYMM')
+        )
+      );
 		}
 
 		return res;
@@ -235,7 +243,7 @@ export default class RangeDatepicker extends Component {
 						</View>
 					</View>
 					{
-						this.props.infoText != "" && 
+						this.props.infoText != "" &&
 						<View style={this.props.infoContainerStyle}>
 							<Text style={this.props.infoStyle}>{this.props.infoText}</Text>
 						</View>
@@ -254,7 +262,7 @@ export default class RangeDatepicker extends Component {
 			            showsVerticalScrollIndicator={false} />
 					<View style={[styles.buttonWrapper, this.props.buttonContainerStyle]}>
 						<Button
-							title="Select Date" 
+							title="Select Date"
 							onPress={this.handleConfirmDate}
 							color={this.props.buttonColor} />
 					</View>
@@ -264,17 +272,17 @@ export default class RangeDatepicker extends Component {
 }
 
 const styles = StyleSheet.create({
-	dayHeader : { 
-		flexDirection: 'row', 
-		borderBottomWidth: 1, 
+	dayHeader : {
+		flexDirection: 'row',
+		borderBottomWidth: 1,
 		paddingBottom: 10,
 		paddingTop: 10,
 	},
 	buttonWrapper : {
-		paddingVertical: 10, 
-		paddingHorizontal: 15, 
-		backgroundColor: 'white', 
-		borderTopWidth: 1, 
+		paddingVertical: 10,
+		paddingHorizontal: 15,
+		backgroundColor: 'white',
+		borderTopWidth: 1,
 		borderColor: '#ccc',
 		alignItems: 'stretch'
 	},
