@@ -60,7 +60,9 @@ export default class RangeDatepicker extends Component {
 		infoText: '',
 		infoStyle: {color: '#fff', fontSize: 13},
 		infoContainerStyle: {marginRight: 20, paddingHorizontal: 20, paddingVertical: 5, backgroundColor: 'green', borderRadius: 20, alignSelf: 'flex-end'},
-		removeClippedSubviews: true
+		removeClippedSubviews: true,
+		showSelectionInfo: true,
+		showButton: true,
 	};
 
 
@@ -89,7 +91,9 @@ export default class RangeDatepicker extends Component {
 		infoText: PropTypes.string,
 		infoStyle: PropTypes.object,
 		infoContainerStyle: PropTypes.object,
-		removeClippedSubviews: PropTypes.bool
+		removeClippedSubviews: PropTypes.bool,
+		showSelectionInfo: PropTypes.bool,
+		showButton: PropTypes.bool,
 	}
 
 	componentWillReceiveProps(nextProps) {
@@ -217,25 +221,31 @@ export default class RangeDatepicker extends Component {
 							:
 							null
 					}
-					<View style={{ flexDirection: 'row', justifyContent: "space-between", paddingHorizontal: 20, paddingBottom: 5, alignItems: 'center'}}>
-						<View style={{flex: 1}}>
-							<Text style={{fontSize: 34, color: '#666'}}>
-								{ this.state.startDate ? moment(this.state.startDate).format("MMM DD YYYY") : this.props.placeHolderStart}
-							</Text>
-						</View>
+					{
+						this.props.showSelectionInfo ? 
+						(
+						<View style={{ flexDirection: 'row', justifyContent: "space-between", paddingHorizontal: 20, paddingBottom: 5, alignItems: 'center'}}>
+							<View style={{flex: 1}}>
+								<Text style={{fontSize: 34, color: '#666'}}>
+									{ this.state.startDate ? moment(this.state.startDate).format("MMM DD YYYY") : this.props.placeHolderStart}
+								</Text>
+							</View>
 
-						<View style={{}}>
-							<Text style={{fontSize: 80}}>
-								/
-							</Text>
-						</View>
+							<View style={{}}>
+								<Text style={{fontSize: 80}}>
+									/
+								</Text>
+							</View>
 
-						<View style={{flex: 1}}>
-							<Text style={{fontSize: 34, color: '#666', textAlign: 'right'}}>
-								{ this.state.untilDate ? moment(this.state.untilDate).format("MMM DD YYYY") : this.props.placeHolderUntil}
-							</Text>
+							<View style={{flex: 1}}>
+								<Text style={{fontSize: 34, color: '#666', textAlign: 'right'}}>
+									{ this.state.untilDate ? moment(this.state.untilDate).format("MMM DD YYYY") : this.props.placeHolderUntil}
+								</Text>
+							</View>
 						</View>
-					</View>
+						) : null
+					}
+					
 					{
 						this.props.infoText != "" && 
 						<View style={this.props.infoContainerStyle}>
@@ -255,12 +265,19 @@ export default class RangeDatepicker extends Component {
 			            initialListSize={1}
 			            showsVerticalScrollIndicator={false}
 						removeClippedSubviews={this.props.removeClippedSubviews} />
-					<View style={[styles.buttonWrapper, this.props.buttonContainerStyle]}>
-						<Button
-							title="Select Date" 
-							onPress={this.handleConfirmDate}
-							color={this.props.buttonColor} />
-					</View>
+
+					{
+						this.props.showButton ? 
+						(
+						<View style={[styles.buttonWrapper, this.props.buttonContainerStyle]}>
+							<Button
+								title="Select Date" 
+								onPress={this.handleConfirmDate}
+								color={this.props.buttonColor} />
+						</View>
+						) : null
+					}	
+					
 				</View>
 			)
 	}
