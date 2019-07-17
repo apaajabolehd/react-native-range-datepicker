@@ -47,7 +47,8 @@ export default class RangeDatepicker extends Component {
 		maxDate: '',
 		infoText: '',
 		infoStyle: {color: '#fff', fontSize: 13},
-		infoContainerStyle: {marginRight: 20, paddingHorizontal: 20, paddingVertical: 5, backgroundColor: 'green', borderRadius: 20, alignSelf: 'flex-end'}
+		infoContainerStyle: {marginRight: 20, paddingHorizontal: 20, paddingVertical: 5, backgroundColor: 'green', borderRadius: 20, alignSelf: 'flex-end'},
+		removeClippedSubviews: true
 	};
 
 
@@ -66,7 +67,8 @@ export default class RangeDatepicker extends Component {
 		todayColor: PropTypes.string,
 		infoText: PropTypes.string,
 		infoStyle: PropTypes.object,
-		infoContainerStyle: PropTypes.object
+		infoContainerStyle: PropTypes.object,
+		removeClippedSubviews: PropTypes.bool
 	}
 
 	componentWillReceiveProps(nextProps) {
@@ -146,7 +148,8 @@ export default class RangeDatepicker extends Component {
 			            dataSource={monthStack}
 			            renderRow={this.handleRenderRow}
 			            initialListSize={1}
-			            showsVerticalScrollIndicator={false} />
+			            showsVerticalScrollIndicator={false}
+						removeClippedSubviews={this.props.removeClippedSubviews} />
 				</View>
 			)
 	}
