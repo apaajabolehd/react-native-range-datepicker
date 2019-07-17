@@ -46,7 +46,8 @@ static defaultProps = {
 	maxDate: '',
 	infoText: '',
 	infoStyle: {color: '#fff', fontSize: 13},
-	infoContainerStyle: {marginRight: 20, paddingHorizontal: 20, paddingVertical: 5, backgroundColor: 'green', borderRadius: 20, alignSelf: 'flex-end'}
+	infoContainerStyle: {marginRight: 20, paddingHorizontal: 20, paddingVertical: 5, backgroundColor: 'green', borderRadius: 20, alignSelf: 'flex-end'},
+	removeClippedSubviews: true
 };
 ```
 
@@ -76,7 +77,8 @@ static propTypes = {
 	todayColor: PropTypes.string,
 	infoText: PropTypes.string,
 	infoStyle: PropTypes.object,
-	infoContainerStyle: PropTypes.object
+	infoContainerStyle: PropTypes.object,
+	removeClippedSubviews: PropTypes.bool
 }
 ```
 
@@ -107,7 +109,8 @@ static defaultProps = {
 	maxDate: '',
 	infoText: '',
 	infoStyle: {color: '#fff', fontSize: 13},
-	infoContainerStyle: {marginRight: 20, paddingHorizontal: 20, paddingVertical: 5, backgroundColor: 'green', borderRadius: 20, alignSelf: 'flex-end'}
+	infoContainerStyle: {marginRight: 20, paddingHorizontal: 20, paddingVertical: 5, backgroundColor: 'green', borderRadius: 20, alignSelf: 'flex-end'},
+	removeClippedSubviews: true
 };
 ```
 
@@ -128,7 +131,8 @@ static propTypes = {
 	todayColor: PropTypes.string,
 	infoText: PropTypes.string,
 	infoStyle: PropTypes.object,
-	infoContainerStyle: PropTypes.object
+	infoContainerStyle: PropTypes.object,
+	removeClippedSubviews: PropTypes.bool
 }
 ```
 
