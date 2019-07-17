@@ -207,7 +207,7 @@ export default class RangeDatepicker extends Component {
 	render(){
 		const monthStack = this.ds.cloneWithRows(this.getMonthStack());
 			return (
-				<View style={{backgroundColor: '#fff', zIndex: 1000, alignSelf: 'center'}}>
+				<View style={{backgroundColor: '#fff', zIndex: 1000, alignSelf: 'center', width: '100%'}}>
 					{
 						this.props.showClose || this.props.showReset ?
 							(<View style={{ flexDirection: 'row', justifyContent: "space-between", padding: 20, paddingBottom: 10}}>

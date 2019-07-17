@@ -20,7 +20,7 @@ export default class DayRow extends React.Component {
 
 	render() {
 		return (
-			<View style={{ marginBottom: 2, marginTop: 2, flexDirection: 'row', justifyContent: 'space-between'}}>
+			<View style={{ marginBottom: 2, marginTop: 2, flexDirection: 'row', justifyContent: 'space-evenly', flex: 1}}>
 				{
 					this.props.days.map((day, i) => {
 						return (
