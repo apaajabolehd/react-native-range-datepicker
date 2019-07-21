@@ -9,7 +9,7 @@ import {
   ActivityIndicator,
   InteractionManager,
   Platform,
-  ListView,
+  FlatView,
   StyleSheet,
   Button,
   Dimensions
@@ -23,7 +23,6 @@ const DEVICE_WIDTH = Dimensions.get('window').width;
 export default class RangeDatepicker extends Component {
 	constructor(props) {
 		super(props);
-    	this.ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 != r2});
 		this.state = {
 			startDate: props.startDate && moment(props.startDate, 'YYYYMMDD'),
 			untilDate: props.untilDate && moment(props.untilDate, 'YYYYMMDD'),
@@ -60,7 +59,6 @@ export default class RangeDatepicker extends Component {
 		infoText: '',
 		infoStyle: {color: '#fff', fontSize: 13},
 		infoContainerStyle: {marginRight: 20, paddingHorizontal: 20, paddingVertical: 5, backgroundColor: 'green', borderRadius: 20, alignSelf: 'flex-end'},
-		removeClippedSubviews: true,
 		showSelectionInfo: true,
 		showButton: true,
 	};
@@ -91,7 +89,6 @@ export default class RangeDatepicker extends Component {
 		infoText: PropTypes.string,
 		infoStyle: PropTypes.object,
 		infoContainerStyle: PropTypes.object,
-		removeClippedSubviews: PropTypes.bool,
 		showSelectionInfo: PropTypes.bool,
 		showButton: PropTypes.bool,
 	}
@@ -177,7 +174,7 @@ export default class RangeDatepicker extends Component {
 		this.props.onConfirm && this.props.onConfirm(this.state.startDate,this.state.untilDate);
 	}
 
-	handleRenderRow(month) {
+	handleRenderRow(month, index) {
 		const { selectedBackgroundColor, selectedTextColor, todayColor, ignoreMinDate, minDate, maxDate } = this.props;
 		let { availableDates, startDate, untilDate } = this.state;
 
@@ -259,12 +256,14 @@ export default class RangeDatepicker extends Component {
 							})
 						}
 					</View>
-					<ListView
-			            dataSource={monthStack}
-			            renderRow={this.handleRenderRow}
-			            initialListSize={1}
+					<FlatList
+			            data={this.getMonthStack()}
+			            renderItem={ ({item, index}) => { 
+							return this.handleRenderRow(item, index)
+						}}
+						keyExtractor = { (item, index) => index.toString() }
 			            showsVerticalScrollIndicator={false}
-						removeClippedSubviews={this.props.removeClippedSubviews} />
+					/>
 
 					{
 						this.props.showButton ? 
