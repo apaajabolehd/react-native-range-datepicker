@@ -202,7 +202,6 @@ export default class RangeDatepicker extends Component {
 	}
 
 	render(){
-		const monthStack = this.ds.cloneWithRows(this.getMonthStack());
 			return (
 				<View style={{backgroundColor: '#fff', zIndex: 1000, alignSelf: 'center', width: '100%'}}>
 					{
