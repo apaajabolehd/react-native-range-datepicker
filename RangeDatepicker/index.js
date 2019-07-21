@@ -9,7 +9,7 @@ import {
   ActivityIndicator,
   InteractionManager,
   Platform,
-  FlatView,
+  FlatList,
   StyleSheet,
   Button,
   Dimensions
