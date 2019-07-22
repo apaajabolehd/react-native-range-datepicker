@@ -3,12 +3,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import {
   Text,
-  TouchableOpacity,
-  TouchableWithoutFeedback,
   View,
-  ActivityIndicator,
-  InteractionManager,
-  Platform,
   FlatList,
   StyleSheet,
   Button,
