@@ -4,7 +4,6 @@ import {
 	View
 } from 'react-native';
 import Day from './Day';
-import moment from 'moment';
 
 export default class DayRow extends React.Component {
 	constructor(props) {

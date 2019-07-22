@@ -7,13 +7,10 @@ import {
   FlatList,
   StyleSheet,
   Button,
-  Dimensions
 } from 'react-native';
 import Month from './Month';
 // import styles from './styles';
 import moment from 'moment';
-
-const DEVICE_WIDTH = Dimensions.get('window').width;
 
 export default class RangeDatepicker extends Component {
 	constructor(props) {

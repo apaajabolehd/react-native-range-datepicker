@@ -2,8 +2,6 @@
 import React from 'react';
 import {
 	View,
-	StyleSheet,
-	ScrollView,
 	Text
 } from 'react-native';
 import DayRow from './DayRow'
