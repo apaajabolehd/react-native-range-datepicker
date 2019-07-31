@@ -34,6 +34,7 @@ static defaultProps = {
 	showSelectionInfo: true,
 	showButton: true,
 	ignoreMinDate: false,
+  isHistorical: false, //Switches direction of months from forward to a historical view with the current month on top.
 	onClose: () => {},
 	onSelect: () => {},
 	onConfirm: () => {},
