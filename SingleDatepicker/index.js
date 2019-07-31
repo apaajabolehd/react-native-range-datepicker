@@ -3,28 +3,19 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import {
   Text,
-  TouchableOpacity,
-  TouchableWithoutFeedback,
   View,
-  ActivityIndicator,
-  InteractionManager,
-  Platform,
-  ListView,
+  FlatList,
   StyleSheet,
-  Button,
   Dimensions
 } from 'react-native';
 import Month from './Month';
 // import styles from './styles';
 import moment from 'moment';
 
-const DEVICE_WIDTH = Dimensions.get('window').width;
-
 export default class RangeDatepicker extends Component {
 	constructor(props) {
 		super(props);
 
-    	this.ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 != r2});
 		this.state = {
 			availableDates: props.availableDates || null
 		}
@@ -47,7 +38,7 @@ export default class RangeDatepicker extends Component {
 		maxDate: '',
 		infoText: '',
 		infoStyle: {color: '#fff', fontSize: 13},
-		infoContainerStyle: {marginRight: 20, paddingHorizontal: 20, paddingVertical: 5, backgroundColor: 'green', borderRadius: 20, alignSelf: 'flex-end'}
+		infoContainerStyle: {marginRight: 20, paddingHorizontal: 20, paddingVertical: 5, backgroundColor: 'green', borderRadius: 20, alignSelf: 'flex-end'},
 	};
 
 
@@ -66,7 +57,7 @@ export default class RangeDatepicker extends Component {
 		todayColor: PropTypes.string,
 		infoText: PropTypes.string,
 		infoStyle: PropTypes.object,
-		infoContainerStyle: PropTypes.object
+		infoContainerStyle: PropTypes.object,
 	}
 
 	componentWillReceiveProps(nextProps) {
@@ -92,7 +83,7 @@ export default class RangeDatepicker extends Component {
 		return res;
 	}
 
-	handleRenderRow(month) {
+	handleRenderRow(month, index) {
 		const { selectedBackgroundColor, selectedTextColor, todayColor, ignoreMinDate, minDate, maxDate } = this.props;
 		let { availableDates } = this.state;
 
@@ -116,7 +107,6 @@ export default class RangeDatepicker extends Component {
 	}
 
 	render(){
-		const monthStack = this.ds.cloneWithRows(this.getMonthStack());
 			return (
 				<View style={{backgroundColor: '#fff', zIndex: 1000, alignSelf: 'center'}}>
 					{
@@ -138,15 +128,18 @@ export default class RangeDatepicker extends Component {
 					<View style={styles.dayHeader}>
 						{
 							this.props.dayHeadings.map((day, i) => {
-								return (<Text style={{width: DEVICE_WIDTH / 7, textAlign: 'center'}} key={i}>{day}</Text>)
+								return (<Text style={{width: "14.28%", textAlign: 'center'}} key={i}>{day}</Text>)
 							})
 						}
 					</View>
-					<ListView
-			            dataSource={monthStack}
-			            renderRow={this.handleRenderRow}
-			            initialListSize={1}
-			            showsVerticalScrollIndicator={false} />
+					<FlatList
+			            data={this.getMonthStack()}
+			            renderItem={ ({item, index}) => { 
+							return this.handleRenderRow(item, index)
+						}}
+						keyExtractor = { (item, index) => index.toString() }
+			            showsVerticalScrollIndicator={false}
+						/>
 				</View>
 			)
 	}

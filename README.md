@@ -31,6 +31,8 @@ static defaultProps = {
 	buttonContainerStyle: {},
 	showReset: true,
 	showClose: true,
+	showSelectionInfo: true,
+	showButton: true,
 	ignoreMinDate: false,
 	onClose: () => {},
 	onSelect: () => {},
@@ -46,7 +48,7 @@ static defaultProps = {
 	maxDate: '',
 	infoText: '',
 	infoStyle: {color: '#fff', fontSize: 13},
-	infoContainerStyle: {marginRight: 20, paddingHorizontal: 20, paddingVertical: 5, backgroundColor: 'green', borderRadius: 20, alignSelf: 'flex-end'}
+	infoContainerStyle: {marginRight: 20, paddingHorizontal: 20, paddingVertical: 5, backgroundColor: 'green', borderRadius: 20, alignSelf: 'flex-end'},
 };
 ```
 
@@ -65,6 +67,8 @@ static propTypes = {
 	maxDate: PropTypes.string,
 	showReset: PropTypes.bool,
 	showClose: PropTypes.bool,
+	showSelectionInfo: PropTypes.bool,
+	showButton: PropTypes.bool,
 	ignoreMinDate: PropTypes.bool,
 	onClose: PropTypes.func,
 	onSelect: PropTypes.func,
@@ -76,7 +80,7 @@ static propTypes = {
 	todayColor: PropTypes.string,
 	infoText: PropTypes.string,
 	infoStyle: PropTypes.object,
-	infoContainerStyle: PropTypes.object
+	infoContainerStyle: PropTypes.object,
 }
 ```
 
@@ -107,7 +111,7 @@ static defaultProps = {
 	maxDate: '',
 	infoText: '',
 	infoStyle: {color: '#fff', fontSize: 13},
-	infoContainerStyle: {marginRight: 20, paddingHorizontal: 20, paddingVertical: 5, backgroundColor: 'green', borderRadius: 20, alignSelf: 'flex-end'}
+	infoContainerStyle: {marginRight: 20, paddingHorizontal: 20, paddingVertical: 5, backgroundColor: 'green', borderRadius: 20, alignSelf: 'flex-end'},
 };
 ```
 
@@ -128,23 +132,10 @@ static propTypes = {
 	todayColor: PropTypes.string,
 	infoText: PropTypes.string,
 	infoStyle: PropTypes.object,
-	infoContainerStyle: PropTypes.object
+	infoContainerStyle: PropTypes.object,
 }
 ```
 
-
-### New Update
-- Available Dates (enable only available date, eg: ["20170620","20170621","20170622","20170623"])
-- Min. Date (minimum date, disabled all date before minDate, eg: "20170620")
-- Max. Date (maximum date, disabled all date after maxDate, eg: "20170630")
-- Ignore Min. Date (ignore minimum date, allow to change startdate even though the selected date is lower than minDate)
-- Initial month (first month on calendar, string with 'YYYYMM' format, eg: "201710")
-- New component (SingleDatepicker), see above for example
-
-
-Ok, that's all.
-
-Sorry, if this README is so simple and miss something out, this is my first package after all.
-
-Feel free to use this package and contributors are welcome.
-Thank you.
+### Update 23/07/2019
+* RN 0.6 compatibility: replaced ListView by FlatList
+* added more flexible width based on actual container size

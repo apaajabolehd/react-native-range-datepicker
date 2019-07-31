@@ -2,8 +2,6 @@
 import React from 'react';
 import {
 	View,
-	StyleSheet,
-	ScrollView,
 	Text
 } from 'react-native';
 import DayRow from './DayRow'
@@ -120,7 +118,7 @@ export default class Month extends React.Component {
 		const dayStack = this.getDayStack(moment(month, 'YYYYMM'));
 		return (
 			<View>
-				<Text style={{fontSize: 20, padding: 20}}>{moment(month, 'YYYYMM').format("MMMM YYYY")}</Text>
+				<Text style={{fontSize: 14, padding: 14}}>{moment(month, 'YYYYMM').format("MMMM YYYY")}</Text>
 				<View>
 					{
 						dayStack.map((days, i) => {
