@@ -203,7 +203,7 @@ export default class RangeDatepicker extends Component {
 
 	render(){
 			return (
-				<View style={{backgroundColor: '#fff', zIndex: 1000, alignSelf: 'center', width: '100%'}}>
+				<View style={{backgroundColor: '#fff', zIndex: 1000, alignSelf: 'center', width: '100%', flex: 1}}>
 					{
 						this.props.showClose || this.props.showReset ?
 							(<View style={{ flexDirection: 'row', justifyContent: "space-between", padding: 20, paddingBottom: 10}}>
@@ -256,6 +256,7 @@ export default class RangeDatepicker extends Component {
 						}
 					</View>
 					<FlatList
+						style={{ flex: 1 }}
 			            data={this.getMonthStack()}
 			            renderItem={ ({item, index}) => { 
 							return this.handleRenderRow(item, index)
