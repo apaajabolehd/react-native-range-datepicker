@@ -25,7 +25,7 @@ export default class Day extends React.Component {
 	render() {
 		let {day, dayProps} = this.props;
 		let dayStyle = {backgroundColor : 'transparent', position: 'relative', width: "14.28%"};
-		let textDayStyle = {color: 'black'};
+		let textDayStyle = {color: this.props.textColor};
 
 		switch(day.type){
 			case "single" : 

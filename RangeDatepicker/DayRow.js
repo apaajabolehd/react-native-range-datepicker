@@ -23,7 +23,7 @@ export default class DayRow extends React.Component {
 				{
 					this.props.days.map((day, i) => {
 						return (
-							<Day key={i} dayProps={this.props.dayProps} onSelectDate={this.props.onSelectDate} day={day}/>
+							<Day key={i} dayProps={this.props.dayProps} onSelectDate={this.props.onSelectDate} day={day} textColor={this.props.textColor}/>
 						)
 					})
 				}
