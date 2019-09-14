@@ -14,8 +14,8 @@ $ npm i react-native-range-datepicker --save
 import DatepickerRange from 'react-native-range-datepicker';
 
 <DatepickerRange
-    startDate="13052017",
-    untilDate="26062017",
+    startDate="13052017"
+    untilDate="26062017"
     onConfirm={( startDate, untilDate ) => this.setState({ startDate, untilDate })}
 />
 ```
