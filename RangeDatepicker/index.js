@@ -222,19 +222,19 @@ export default class RangeDatepicker extends Component {
 						(
 						<View style={{ flexDirection: 'row', justifyContent: "space-between", paddingHorizontal: 20, paddingBottom: 5, alignItems: 'center'}}>
 							<View style={{flex: 1}}>
-								<Text style={{fontSize: 34, color: '#666'}}>
+								<Text style={{fontSize: 14, color: '#666'}}>
 									{ this.state.startDate ? moment(this.state.startDate).format("MMM DD YYYY") : this.props.placeHolderStart}
 								</Text>
 							</View>
 
 							<View style={{}}>
-								<Text style={{fontSize: 80}}>
+								<Text style={{fontSize: 20}}>
 									/
 								</Text>
 							</View>
 
 							<View style={{flex: 1}}>
-								<Text style={{fontSize: 34, color: '#666', textAlign: 'right'}}>
+								<Text style={{fontSize: 14, color: '#666', textAlign: 'right'}}>
 									{ this.state.untilDate ? moment(this.state.untilDate).format("MMM DD YYYY") : this.props.placeHolderUntil}
 								</Text>
 							</View>
