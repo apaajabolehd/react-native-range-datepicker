@@ -9,8 +9,9 @@ import {
   Button,
 } from 'react-native';
 import Month from './Month';
-// import styles from './styles';
+
 import moment from 'moment';
+import DayHeader from './DayHeader';
 
 export default class RangeDatepicker extends Component {
 	constructor(props) {
@@ -30,18 +31,27 @@ export default class RangeDatepicker extends Component {
 	static defaultProps = {
 		initialMonth: '',
 		dayHeadings: ['S', 'M', 'T', 'W', 'T', 'F', 'S'],
+		dayHeaderStyle: {},
+		dayHeaderContainerStyle: {},
 		maxMonth: 12,
 		buttonColor: 'green',
 		buttonContainerStyle: {},
-                buttonText: 'Select Date',
-                closeButtonText: 'Close',
-                chosenDateTextColor: '#666',
-                containerStyle: {},
-                dayHeaderDividerColor: "#000000",
+		flatListProps: {},
+		monthProps: {},
+    buttonText: 'Select Date',
+    closeButtonText: 'Close',
+    chosenDateTextColor: '#666',
+    containerStyle: {},
+    dayHeaderDividerColor: "#000000",
 		showReset: true,
 		showClose: true,
+		showConfirmButton: true,
+		showSelectedRange: true,
+		showsVerticalScrollIndicator: false,
+		showDaysHeader: true,
 		ignoreMinDate: false,
-                isHistorical: false,
+		dayContainerOffset: 0,
+    isHistorical: false,
 		onClose: () => {},
 		onSelect: () => {},
 		onConfirm: () => {},
@@ -49,9 +59,13 @@ export default class RangeDatepicker extends Component {
 		placeHolderUntil: 'Until Date',
 		selectedBackgroundColor: 'green',
 		selectedTextColor: 'white',
+		dayBackgroundColor: '',
+		dayTextColor: '',
+		pointBackgroundColor: '',
+		pointTextColor: '',
 		textColor: '#000000',
 		todayColor: 'green',
-                resetButtonText: "Reset",
+    resetButtonText: "Reset",
 		startDate: '',
 		untilDate: '',
 		minDate: '',
@@ -71,29 +85,41 @@ export default class RangeDatepicker extends Component {
 		availableDates: PropTypes.arrayOf(PropTypes.string),
 		maxMonth: PropTypes.number,
 		buttonColor: PropTypes.string,
+		flatListProps: PropTypes.object,
+		dayHeaderStyle: PropTypes.object,
+		dayHeaderContainerStyle: PropTypes.object,
 		buttonContainerStyle: PropTypes.object,
-                buttonText: PropTypes.string, 
+		monthProps: PropTypes.object,
+    buttonText: PropTypes.string, 
 		closeButtonText: PropTypes.string,
 		chosenDateTextColor: PropTypes.string,
 		containerStyle: PropTypes.object,
-                dayHeaderDividerColor: PropTypes.string,
+    dayHeaderDividerColor: PropTypes.string,
 		startDate: PropTypes.string,
 		untilDate: PropTypes.string,
 		minDate: PropTypes.string,
 		maxDate: PropTypes.string,
 		showReset: PropTypes.bool,
 		showClose: PropTypes.bool,
+		dayContainerOffset: PropTypes.number,
+		showConfirmButton: PropTypes.bool,
+		showSelectedRange: PropTypes.bool,
+		showsVerticalScrollIndicator: PropTypes.bool,
 		ignoreMinDate: PropTypes.bool,
-                isHistorical: PropTypes.bool,
+    isHistorical: PropTypes.bool,
 		onClose: PropTypes.func,
 		onSelect: PropTypes.func,
 		onConfirm: PropTypes.func,
 		placeHolderStart: PropTypes.string,
 		placeHolderUntil: PropTypes.string,
-                resetButtonText: PropTypes.string,
+    resetButtonText: PropTypes.string,
 		selectedBackgroundColor: PropTypes.string,
 		selectedTextColor: PropTypes.string,
-                textColor: PropTypes.string,
+		dayBackgroundColor: PropTypes.string,
+		dayTextColor: PropTypes.string,
+		pointBackgroundColor: PropTypes.string,
+		pointTextColor: PropTypes.string,
+    textColor: PropTypes.string,
 		todayColor: PropTypes.string,
 		infoText: PropTypes.string,
 		infoStyle: PropTypes.object,
@@ -190,8 +216,25 @@ export default class RangeDatepicker extends Component {
 		this.props.onConfirm && this.props.onConfirm(this.state.startDate,this.state.untilDate);
 	}
 
-	handleRenderRow(month, index) {
-		const { selectedBackgroundColor, selectedTextColor, todayColor, ignoreMinDate, minDate, maxDate } = this.props;
+	handleRenderRow({item: month, index }) {
+		const {
+			selectedBackgroundColor,
+			selectedTextColor,
+			pointTextColor,
+			pointBackgroundColor,
+			dayBackgroundColor,
+			dayTextColor,
+			todayColor,
+			ignoreMinDate,
+			minDate,
+			maxDate,
+			monthProps,
+			dayHeadings,
+			dayHeaderStyle,
+			dayHeaderContainerStyle,
+			dayContainerOffset,
+		} = this.props;
+
 		let { availableDates, startDate, untilDate } = this.state;
 
 
@@ -202,7 +245,6 @@ export default class RangeDatepicker extends Component {
 					return true;
 			});
 		}
-
 		return (
 			<Month
 				onSelectDate={this.onSelectDate}
@@ -212,13 +254,28 @@ export default class RangeDatepicker extends Component {
 				minDate={minDate ? moment(minDate, 'YYYYMMDD') : minDate}
 				maxDate={maxDate ? moment(maxDate, 'YYYYMMDD') : maxDate}
 				ignoreMinDate={ignoreMinDate}
-				dayProps={{selectedBackgroundColor, selectedTextColor, todayColor}}
-				month={month} 
-                                textColor={this.props.textColor} />
+
+				dayProps={{
+					dayContainerOffset,
+					selectedBackgroundColor,
+					selectedTextColor,
+					pointTextColor,
+					pointBackgroundColor,
+					dayBackgroundColor,
+					dayTextColor,
+					todayColor,
+				}}
+        textColor={this.props.textColor}
+				dayHeaderProps={{dayHeadings, dayHeaderContainerStyle, dayHeaderStyle}}
+				month={month}
+				{...monthProps} />
 		)
 	}
 
 	render(){
+
+		const monthStack = this.getMonthStack();
+
 			return (
 				<View style={[ {backgroundColor: '#fff', zIndex: 1000, alignSelf: 'center', width: '100%', flex: 1}, this.props.containerStyle ]}>
 					{
@@ -234,9 +291,8 @@ export default class RangeDatepicker extends Component {
 							:
 							null
 					}
-					{
-						this.props.showSelectionInfo ? 
-						(
+
+					{this.props.showSelectedRange && (
 						<View style={{ flexDirection: 'row', justifyContent: "space-between", paddingHorizontal: 20, paddingBottom: 5, alignItems: 'center'}}>
 							<View style={{flex: 1}}>
 								<Text style={{fontSize: 34, color: this.props.chosenDateTextColor}}>
@@ -256,55 +312,45 @@ export default class RangeDatepicker extends Component {
 								</Text>
 							</View>
 						</View>
-						) : null
-					}
-					
+					)}
+          
 					{
 						this.props.infoText != "" &&
 						<View style={this.props.infoContainerStyle}>
 							<Text style={this.props.infoStyle}>{this.props.infoText}</Text>
 						</View>
 					}
-					<View style={[ styles.dayHeader, {borderBottomColor: this.props.dayHeaderDividerColor} ]}>
-						{
-							this.props.dayHeadings.map((day, i) => {
-								return (<Text style={{width: "14.28%", textAlign: 'center', color: this.props.textColor}} key={i}>{day}</Text>)
-							})
-						}
-					</View>
-					<FlatList
-						style={{ flex: 1 }}
-			            data={this.getMonthStack()}
-			            renderItem={ ({item, index}) => { 
-							return this.handleRenderRow(item, index)
-						}}
-						keyExtractor = { (item, index) => index.toString() }
-			            showsVerticalScrollIndicator={false}
-					/>
 
-					{
-						this.props.showButton ? 
-						(
+					{this.props.showDaysHeader && (
+						<DayHeader
+							dayHeadings={this.props.dayHeadings}
+							dayHeaderStyle={this.props.dayHeaderStyle}
+							dayHeaderContainerStyle={this.props.dayHeaderContainerStyle}
+							dayContainerOffset={this.props.dayContainerOffset}
+						/>
+					)}
+					<FlatList
+						scrollView={{
+							scrollEnabled: this.props.showsVerticalScrollIndicator,
+						}}
+						{...this.props.flatListProps}
+						data={monthStack}
+						renderItem={this.handleRenderRow}
+			        />
+					{this.props.showConfirmButton && (
 						<View style={[styles.buttonWrapper, this.props.buttonContainerStyle]}>
 							<Button
 								title={this.props.buttonText}
 								onPress={this.handleConfirmDate}
 								color={this.props.buttonColor} />
 						</View>
-						) : null
-					}	
+					)}
 				</View>
 			)
 	}
 }
 
 const styles = StyleSheet.create({
-	dayHeader : {
-		flexDirection: 'row',
-		borderBottomWidth: 1,
-		paddingBottom: 10,
-		paddingTop: 10,
-	},
 	buttonWrapper : {
 		paddingVertical: 10,
 		paddingHorizontal: 15,
