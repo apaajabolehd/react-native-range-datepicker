@@ -61,6 +61,7 @@ export default class RangeDatepicker extends Component {
 		infoContainerStyle: {marginRight: 20, paddingHorizontal: 20, paddingVertical: 5, backgroundColor: 'green', borderRadius: 20, alignSelf: 'flex-end'},
 		showSelectionInfo: true,
 		showButton: true,
+		buttonText: 'Select Date',
 	};
 
 
@@ -99,6 +100,7 @@ export default class RangeDatepicker extends Component {
 		infoContainerStyle: PropTypes.object,
 		showSelectionInfo: PropTypes.bool,
 		showButton: PropTypes.bool,
+		buttonText: PropTypes.string,
 	}
 
 	componentWillReceiveProps(nextProps) {
