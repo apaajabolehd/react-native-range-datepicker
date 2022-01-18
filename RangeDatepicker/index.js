@@ -33,10 +33,15 @@ export default class RangeDatepicker extends Component {
 		maxMonth: 12,
 		buttonColor: 'green',
 		buttonContainerStyle: {},
+                buttonText: 'Select Date',
+                closeButtonText: 'Close',
+                chosenDateTextColor: '#666',
+                containerStyle: {},
+                dayHeaderDividerColor: "#000000",
 		showReset: true,
 		showClose: true,
 		ignoreMinDate: false,
-    isHistorical: false,
+                isHistorical: false,
 		onClose: () => {},
 		onSelect: () => {},
 		onConfirm: () => {},
@@ -44,7 +49,9 @@ export default class RangeDatepicker extends Component {
 		placeHolderUntil: 'Until Date',
 		selectedBackgroundColor: 'green',
 		selectedTextColor: 'white',
+		textColor: '#000000',
 		todayColor: 'green',
+                resetButtonText: "Reset",
 		startDate: '',
 		untilDate: '',
 		minDate: '',
@@ -65,6 +72,11 @@ export default class RangeDatepicker extends Component {
 		maxMonth: PropTypes.number,
 		buttonColor: PropTypes.string,
 		buttonContainerStyle: PropTypes.object,
+                buttonText: PropTypes.string, 
+		closeButtonText: PropTypes.string,
+		chosenDateTextColor: PropTypes.string,
+		containerStyle: PropTypes.object,
+                dayHeaderDividerColor: PropTypes.string,
 		startDate: PropTypes.string,
 		untilDate: PropTypes.string,
 		minDate: PropTypes.string,
@@ -72,14 +84,16 @@ export default class RangeDatepicker extends Component {
 		showReset: PropTypes.bool,
 		showClose: PropTypes.bool,
 		ignoreMinDate: PropTypes.bool,
-    isHistorical: PropTypes.bool,
+                isHistorical: PropTypes.bool,
 		onClose: PropTypes.func,
 		onSelect: PropTypes.func,
 		onConfirm: PropTypes.func,
 		placeHolderStart: PropTypes.string,
 		placeHolderUntil: PropTypes.string,
+                resetButtonText: PropTypes.string,
 		selectedBackgroundColor: PropTypes.string,
 		selectedTextColor: PropTypes.string,
+                textColor: PropTypes.string,
 		todayColor: PropTypes.string,
 		infoText: PropTypes.string,
 		infoStyle: PropTypes.object,
@@ -199,21 +213,22 @@ export default class RangeDatepicker extends Component {
 				maxDate={maxDate ? moment(maxDate, 'YYYYMMDD') : maxDate}
 				ignoreMinDate={ignoreMinDate}
 				dayProps={{selectedBackgroundColor, selectedTextColor, todayColor}}
-				month={month} />
+				month={month} 
+                                textColor={this.props.textColor} />
 		)
 	}
 
 	render(){
 			return (
-				<View style={{backgroundColor: '#fff', zIndex: 1000, alignSelf: 'center', width: '100%', flex: 1}}>
+				<View style={[ {backgroundColor: '#fff', zIndex: 1000, alignSelf: 'center', width: '100%', flex: 1}, this.props.containerStyle ]}>
 					{
 						this.props.showClose || this.props.showReset ?
 							(<View style={{ flexDirection: 'row', justifyContent: "space-between", padding: 20, paddingBottom: 10}}>
 								{
-									this.props.showClose && <Text style={{fontSize: 20}} onPress={this.props.onClose}>Close</Text>
+									this.props.showClose && <Text style={{fontSize: 20, color: this.props.textColor}} onPress={this.props.onClose}>{this.props.closeButtonText}</Text>
 								}
 								{
-									this.props.showReset && <Text style={{fontSize: 20}} onPress={this.onReset}>Reset</Text>
+									this.props.showReset && <Text style={{fontSize: 20, color: this.props.textColor}} onPress={this.onReset}>{this.props.resetButtonText}</Text>
 								}
 							</View>)
 							:
@@ -224,19 +239,19 @@ export default class RangeDatepicker extends Component {
 						(
 						<View style={{ flexDirection: 'row', justifyContent: "space-between", paddingHorizontal: 20, paddingBottom: 5, alignItems: 'center'}}>
 							<View style={{flex: 1}}>
-								<Text style={{fontSize: 34, color: '#666'}}>
+								<Text style={{fontSize: 34, color: this.props.chosenDateTextColor}}>
 									{ this.state.startDate ? moment(this.state.startDate).format("MMM DD YYYY") : this.props.placeHolderStart}
 								</Text>
 							</View>
 
 							<View style={{}}>
-								<Text style={{fontSize: 80}}>
+								<Text style={{fontSize: 80, color: this.props.textColor}}>
 									/
 								</Text>
 							</View>
 
 							<View style={{flex: 1}}>
-								<Text style={{fontSize: 34, color: '#666', textAlign: 'right'}}>
+								<Text style={{fontSize: 34, color: this.props.chosenDateTextColor, textAlign: 'right'}}>
 									{ this.state.untilDate ? moment(this.state.untilDate).format("MMM DD YYYY") : this.props.placeHolderUntil}
 								</Text>
 							</View>
@@ -250,10 +265,10 @@ export default class RangeDatepicker extends Component {
 							<Text style={this.props.infoStyle}>{this.props.infoText}</Text>
 						</View>
 					}
-					<View style={styles.dayHeader}>
+					<View style={[ styles.dayHeader, {borderBottomColor: this.props.dayHeaderDividerColor} ]}>
 						{
 							this.props.dayHeadings.map((day, i) => {
-								return (<Text style={{width: "14.28%", textAlign: 'center'}} key={i}>{day}</Text>)
+								return (<Text style={{width: "14.28%", textAlign: 'center', color: this.props.textColor}} key={i}>{day}</Text>)
 							})
 						}
 					</View>
@@ -272,7 +287,7 @@ export default class RangeDatepicker extends Component {
 						(
 						<View style={[styles.buttonWrapper, this.props.buttonContainerStyle]}>
 							<Button
-								title={this.props.buttonText} 
+								title={this.props.buttonText}
 								onPress={this.handleConfirmDate}
 								color={this.props.buttonColor} />
 						</View>
