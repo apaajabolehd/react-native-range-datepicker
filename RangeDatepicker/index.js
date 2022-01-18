@@ -3,29 +3,19 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import {
   Text,
-  TouchableOpacity,
-  TouchableWithoutFeedback,
   View,
-  ActivityIndicator,
-  InteractionManager,
-  Platform,
-  ListView,
   FlatList,
   StyleSheet,
   Button,
-  Dimensions
 } from 'react-native';
 import Month from './Month';
 
 import moment from 'moment';
 import DayHeader from './DayHeader';
 
-const DEVICE_WIDTH = Dimensions.get('window').width;
-
 export default class RangeDatepicker extends Component {
 	constructor(props) {
 		super(props);
-    	this.ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 != r2});
 		this.state = {
 			startDate: props.startDate && moment(props.startDate, 'YYYYMMDD'),
 			untilDate: props.untilDate && moment(props.untilDate, 'YYYYMMDD'),
@@ -48,6 +38,11 @@ export default class RangeDatepicker extends Component {
 		buttonContainerStyle: {},
 		flatListProps: {},
 		monthProps: {},
+    buttonText: 'Select Date',
+    closeButtonText: 'Close',
+    chosenDateTextColor: '#666',
+    containerStyle: {},
+    dayHeaderDividerColor: "#000000",
 		showReset: true,
 		showClose: true,
 		showConfirmButton: true,
@@ -56,6 +51,7 @@ export default class RangeDatepicker extends Component {
 		showDaysHeader: true,
 		ignoreMinDate: false,
 		dayContainerOffset: 0,
+    isHistorical: false,
 		onClose: () => {},
 		onSelect: () => {},
 		onConfirm: () => {},
@@ -67,14 +63,19 @@ export default class RangeDatepicker extends Component {
 		dayTextColor: '',
 		pointBackgroundColor: '',
 		pointTextColor: '',
+		textColor: '#000000',
 		todayColor: 'green',
+    resetButtonText: "Reset",
 		startDate: '',
 		untilDate: '',
 		minDate: '',
 		maxDate: '',
 		infoText: '',
 		infoStyle: {color: '#fff', fontSize: 13},
-		infoContainerStyle: {marginRight: 20, paddingHorizontal: 20, paddingVertical: 5, backgroundColor: 'green', borderRadius: 20, alignSelf: 'flex-end'}
+		infoContainerStyle: {marginRight: 20, paddingHorizontal: 20, paddingVertical: 5, backgroundColor: 'green', borderRadius: 20, alignSelf: 'flex-end'},
+		showSelectionInfo: true,
+		showButton: true,
+		buttonText: 'Select Date',
 	};
 
 
@@ -89,6 +90,11 @@ export default class RangeDatepicker extends Component {
 		dayHeaderContainerStyle: PropTypes.object,
 		buttonContainerStyle: PropTypes.object,
 		monthProps: PropTypes.object,
+    buttonText: PropTypes.string, 
+		closeButtonText: PropTypes.string,
+		chosenDateTextColor: PropTypes.string,
+		containerStyle: PropTypes.object,
+    dayHeaderDividerColor: PropTypes.string,
 		startDate: PropTypes.string,
 		untilDate: PropTypes.string,
 		minDate: PropTypes.string,
@@ -100,21 +106,27 @@ export default class RangeDatepicker extends Component {
 		showSelectedRange: PropTypes.bool,
 		showsVerticalScrollIndicator: PropTypes.bool,
 		ignoreMinDate: PropTypes.bool,
+    isHistorical: PropTypes.bool,
 		onClose: PropTypes.func,
 		onSelect: PropTypes.func,
 		onConfirm: PropTypes.func,
 		placeHolderStart: PropTypes.string,
 		placeHolderUntil: PropTypes.string,
+    resetButtonText: PropTypes.string,
 		selectedBackgroundColor: PropTypes.string,
 		selectedTextColor: PropTypes.string,
 		dayBackgroundColor: PropTypes.string,
 		dayTextColor: PropTypes.string,
 		pointBackgroundColor: PropTypes.string,
 		pointTextColor: PropTypes.string,
+    textColor: PropTypes.string,
 		todayColor: PropTypes.string,
 		infoText: PropTypes.string,
 		infoStyle: PropTypes.object,
-		infoContainerStyle: PropTypes.object
+		infoContainerStyle: PropTypes.object,
+		showSelectionInfo: PropTypes.bool,
+		showButton: PropTypes.bool,
+		buttonText: PropTypes.string,
 	}
 
 	componentWillReceiveProps(nextProps) {
@@ -173,13 +185,19 @@ export default class RangeDatepicker extends Component {
 
 	getMonthStack(){
 		let res = [];
-		const { maxMonth, initialMonth } = this.props;
+		const { maxMonth, initialMonth, isHistorical } = this.props;
 		let initMonth = moment();
 		if(initialMonth && initialMonth != '')
 			initMonth = moment(initialMonth, 'YYYYMM');
 
 		for(let i = 0; i < maxMonth; i++){
-			res.push(initMonth.clone().add(i, 'month').format('YYYYMM'));
+			res.push(
+        !isHistorical ? (
+          initMonth.clone().add(i, 'month').format('YYYYMM')
+        ) : (
+          initMonth.clone().subtract(i, 'month').format('YYYYMM')
+        )
+      );
 		}
 
 		return res;
@@ -216,6 +234,7 @@ export default class RangeDatepicker extends Component {
 			dayHeaderContainerStyle,
 			dayContainerOffset,
 		} = this.props;
+
 		let { availableDates, startDate, untilDate } = this.state;
 
 
@@ -235,6 +254,7 @@ export default class RangeDatepicker extends Component {
 				minDate={minDate ? moment(minDate, 'YYYYMMDD') : minDate}
 				maxDate={maxDate ? moment(maxDate, 'YYYYMMDD') : maxDate}
 				ignoreMinDate={ignoreMinDate}
+
 				dayProps={{
 					dayContainerOffset,
 					selectedBackgroundColor,
@@ -245,6 +265,7 @@ export default class RangeDatepicker extends Component {
 					dayTextColor,
 					todayColor,
 				}}
+        textColor={this.props.textColor}
 				dayHeaderProps={{dayHeadings, dayHeaderContainerStyle, dayHeaderStyle}}
 				month={month}
 				{...monthProps} />
@@ -252,49 +273,54 @@ export default class RangeDatepicker extends Component {
 	}
 
 	render(){
+
 		const monthStack = this.getMonthStack();
+
 			return (
-				<View style={{backgroundColor: '#fff', zIndex: 1000, alignSelf: 'center'}}>
+				<View style={[ {backgroundColor: '#fff', zIndex: 1000, alignSelf: 'center', width: '100%', flex: 1}, this.props.containerStyle ]}>
 					{
 						this.props.showClose || this.props.showReset ?
 							(<View style={{ flexDirection: 'row', justifyContent: "space-between", padding: 20, paddingBottom: 10}}>
 								{
-									this.props.showClose && <Text style={{fontSize: 20}} onPress={this.props.onClose}>Close</Text>
+									this.props.showClose && <Text style={{fontSize: 20, color: this.props.textColor}} onPress={this.props.onClose}>{this.props.closeButtonText}</Text>
 								}
 								{
-									this.props.showReset && <Text style={{fontSize: 20}} onPress={this.onReset}>Reset</Text>
+									this.props.showReset && <Text style={{fontSize: 20, color: this.props.textColor}} onPress={this.onReset}>{this.props.resetButtonText}</Text>
 								}
 							</View>)
 							:
 							null
 					}
+
 					{this.props.showSelectedRange && (
 						<View style={{ flexDirection: 'row', justifyContent: "space-between", paddingHorizontal: 20, paddingBottom: 5, alignItems: 'center'}}>
 							<View style={{flex: 1}}>
-								<Text style={{fontSize: 34, color: '#666'}}>
+								<Text style={{fontSize: 34, color: this.props.chosenDateTextColor}}>
 									{ this.state.startDate ? moment(this.state.startDate).format("MMM DD YYYY") : this.props.placeHolderStart}
 								</Text>
 							</View>
 
 							<View style={{}}>
-								<Text style={{fontSize: 80}}>
+								<Text style={{fontSize: 80, color: this.props.textColor}}>
 									/
 								</Text>
 							</View>
 
 							<View style={{flex: 1}}>
-								<Text style={{fontSize: 34, color: '#666', textAlign: 'right'}}>
+								<Text style={{fontSize: 34, color: this.props.chosenDateTextColor, textAlign: 'right'}}>
 									{ this.state.untilDate ? moment(this.state.untilDate).format("MMM DD YYYY") : this.props.placeHolderUntil}
 								</Text>
 							</View>
 						</View>
 					)}
+          
 					{
 						this.props.infoText != "" &&
 						<View style={this.props.infoContainerStyle}>
 							<Text style={this.props.infoStyle}>{this.props.infoText}</Text>
 						</View>
 					}
+
 					{this.props.showDaysHeader && (
 						<DayHeader
 							dayHeadings={this.props.dayHeadings}
@@ -314,7 +340,7 @@ export default class RangeDatepicker extends Component {
 					{this.props.showConfirmButton && (
 						<View style={[styles.buttonWrapper, this.props.buttonContainerStyle]}>
 							<Button
-								title="Select Date"
+								title={this.props.buttonText}
 								onPress={this.handleConfirmDate}
 								color={this.props.buttonColor} />
 						</View>

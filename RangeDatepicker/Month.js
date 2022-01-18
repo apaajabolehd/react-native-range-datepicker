@@ -3,8 +3,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {
 	View,
-	StyleSheet,
-	ScrollView,
 	Text
 } from 'react-native';
 import DayRow from './DayRow';
@@ -142,7 +140,7 @@ export default class Month extends React.Component {
 		const dayStack = this.getDayStack(moment(month, 'YYYYMM'));
 		return (
 			<View>
-				<Text style={titleStyle}>
+				<Text style={{color: this.props.textColor, ...titleStyle}}>
 					{capitalizeTitle ?
 						capitalize(moment(month, 'YYYYMM').format(titleFormat)) :
 						moment(month, 'YYYYMM').format(titleFormat)
@@ -155,7 +153,7 @@ export default class Month extends React.Component {
 					{
 						dayStack.map((days, i) => {
 							return (
-								<DayRow days={days} dayProps={dayProps} key={i} onSelectDate={this.props.onSelectDate}/>
+								<DayRow days={days} dayProps={dayProps} key={i} onSelectDate={this.props.onSelectDate} textColor={this.props.textColor}/>
 							)
 						})
 					}
