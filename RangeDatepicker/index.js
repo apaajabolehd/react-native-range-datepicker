@@ -1,5 +1,5 @@
 'use strict'
-import React, { Component } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import {
   Text,
@@ -10,143 +10,79 @@ import {
 } from 'react-native';
 import Month from './Month';
 // import styles from './styles';
-import moment from 'moment';
+import { dayJsMod } from '../helper';
 
-export default class RangeDatepicker extends Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-			startDate: props.startDate && moment(props.startDate, 'YYYYMMDD'),
-			untilDate: props.untilDate && moment(props.untilDate, 'YYYYMMDD'),
-			availableDates: props.availableDates || null
-		}
+const RangeDatepicker = (props) => {
+	const [startDate, setStartDate] = useState(props.startDate && dayJsMod(props.startDate, 'YYYYMMDD'));
+	const [untilDate, setUntilDate] = useState(props.untilDate && dayJsMod(props.untilDate, 'YYYYMMDD'));
+	const [availableDates, setAvailableDates] = useState(props.availableDates || null);
 
-		this.onSelectDate = this.onSelectDate.bind(this);
-		this.onReset = this.onReset.bind(this);
-		this.handleConfirmDate = this.handleConfirmDate.bind(this);
-		this.handleRenderRow = this.handleRenderRow.bind(this);
-	}
-
-	static defaultProps = {
-		initialMonth: '',
-		dayHeadings: ['S', 'M', 'T', 'W', 'T', 'F', 'S'],
-		maxMonth: 12,
-		buttonColor: 'green',
-		buttonContainerStyle: {},
-		showReset: true,
-		showClose: true,
-		ignoreMinDate: false,
-    isHistorical: false,
-		onClose: () => {},
-		onSelect: () => {},
-		onConfirm: () => {},
-		placeHolderStart: 'Start Date',
-		placeHolderUntil: 'Until Date',
-		selectedBackgroundColor: 'green',
-		selectedTextColor: 'white',
-		todayColor: 'green',
-		startDate: '',
-		untilDate: '',
-		minDate: '',
-		maxDate: '',
-		infoText: '',
-		infoStyle: {color: '#fff', fontSize: 13},
-		infoContainerStyle: {marginRight: 20, paddingHorizontal: 20, paddingVertical: 5, backgroundColor: 'green', borderRadius: 20, alignSelf: 'flex-end'},
-		showSelectionInfo: true,
-		showButton: true,
-	};
-
-
-	static propTypes = {
-		initialMonth: PropTypes.string,
-		dayHeadings: PropTypes.arrayOf(PropTypes.string),
-		availableDates: PropTypes.arrayOf(PropTypes.string),
-		maxMonth: PropTypes.number,
-		buttonColor: PropTypes.string,
-		buttonContainerStyle: PropTypes.object,
-		startDate: PropTypes.string,
-		untilDate: PropTypes.string,
-		minDate: PropTypes.string,
-		maxDate: PropTypes.string,
-		showReset: PropTypes.bool,
-		showClose: PropTypes.bool,
-		ignoreMinDate: PropTypes.bool,
-    isHistorical: PropTypes.bool,
-		onClose: PropTypes.func,
-		onSelect: PropTypes.func,
-		onConfirm: PropTypes.func,
-		placeHolderStart: PropTypes.string,
-		placeHolderUntil: PropTypes.string,
-		selectedBackgroundColor: PropTypes.string,
-		selectedTextColor: PropTypes.string,
-		todayColor: PropTypes.string,
-		infoText: PropTypes.string,
-		infoStyle: PropTypes.object,
-		infoContainerStyle: PropTypes.object,
-		showSelectionInfo: PropTypes.bool,
-		showButton: PropTypes.bool,
-	}
-
-	componentWillReceiveProps(nextProps) {
-		this.setState({availableDates: nextProps.availableDates});
-	}
-
-	onSelectDate(date){
-		let startDate = null;
-		let untilDate = null;
-		const { availableDates } = this.state;
-
-		if(this.state.startDate && !this.state.untilDate)
+	useEffect(() => {
+		setAvailableDates(props.availableDates)
+	}, [props.availableDates])
+	
+	const onSelectDate = (date) => {
+		let tempStartDate = null;
+		let tempUntilDate = null;
+		// console.log('startDate', startDate);
+		// console.log('untilDate', untilDate);
+		
+		if(startDate && !untilDate)
 		{
-			if(date.format('YYYYMMDD') < this.state.startDate.format('YYYYMMDD') || this.isInvalidRange(date)){
-				startDate = date;
+			if(date.format('YYYYMMDD') < startDate.format('YYYYMMDD') || isInvalidRange(date)){
+				// console.log(1);
+				tempStartDate = date;
 			}
-			else if(date.format('YYYYMMDD') > this.state.startDate.format('YYYYMMDD')){
-				startDate = this.state.startDate;
-				untilDate = date;
+			else if(date.format('YYYYMMDD') > startDate.format('YYYYMMDD')){
+				// console.log(2);
+				tempStartDate = startDate;
+				tempUntilDate = date;
 			}
 			else{
-				startDate = null;
-				untilDate = null;
+				// console.log(3);
+				tempStartDate = null;
+				tempUntilDate = null;
 			}
 		}
-		else if(!this.isInvalidRange(date)) {
-			startDate = date;
+		else if(!isInvalidRange(date)) {
+				// console.log(4);
+				tempStartDate = date;
 		}
 		else {
-			startDate = null;
-			untilDate = null;
+				// console.log(5);
+			tempStartDate = null;
+			tempUntilDate = null;
 		}
 
-		this.setState({startDate, untilDate});
-		this.props.onSelect(startDate, untilDate);
+		setStartDate(tempStartDate);
+		setUntilDate(tempUntilDate);
+		props.onSelect(tempStartDate, tempUntilDate);
 	}
 
-	isInvalidRange(date) {
-		const { startDate, untilDate, availableDates } = this.state;
-
+	const isInvalidRange = (date) => {
 		if(availableDates && availableDates.length > 0){
 			//select endDate condition
 			if(startDate && !untilDate) {
-				for(let i = startDate.format('YYYYMMDD'); i <= date.format('YYYYMMDD'); i = moment(i, 'YYYYMMDD').add(1, 'days').format('YYYYMMDD')){
+				for(let i = startDate.format('YYYYMMDD'); i <= date.format('YYYYMMDD'); i = dayJsMod(i, 'YYYYMMDD').add(1, 'days').format('YYYYMMDD')){
 					if(availableDates.indexOf(i) == -1 && startDate.format('YYYYMMDD') != i)
 						return true;
 				}
 			}
 			//select startDate condition
-			else if(availableDates.indexOf(date.format('YYYYMMDD')) == -1)
+			else if(availableDates.indexOf(date.format('YYYYMMDD')) == -1){
 				return true;
+			}
 		}
 
 		return false;
 	}
 
-	getMonthStack(){
+	const getMonthStack = () => {
 		let res = [];
-		const { maxMonth, initialMonth, isHistorical } = this.props;
-		let initMonth = moment();
+		const { maxMonth, initialMonth, isHistorical } = props;
+		let initMonth = dayJsMod();
 		if(initialMonth && initialMonth != '')
-			initMonth = moment(initialMonth, 'YYYYMM');
+			initMonth = dayJsMod(initialMonth, 'YYYYMM');
 
 		for(let i = 0; i < maxMonth; i++){
 			res.push(
@@ -161,25 +97,19 @@ export default class RangeDatepicker extends Component {
 		return res;
 	}
 
-	onReset(){
-		this.setState({
-			startDate: null,
-			untilDate: null,
-		});
+	const onReset = () => {
+		setStartDate(null);
+		setUntilDate(null);
 
-		this.props.onSelect(null, null);
+		props.onSelect(null, null);
 	}
 
-	handleConfirmDate(){
-		this.props.onConfirm && this.props.onConfirm(this.state.startDate,this.state.untilDate);
+	const handleConfirmDate = () => {
+		props.onConfirm && props.onConfirm(startDate,untilDate);
 	}
 
-	handleRenderRow(month, index) {
-		const { selectedBackgroundColor, selectedTextColor, todayColor, ignoreMinDate, minDate, maxDate } = this.props;
-		let { availableDates, startDate, untilDate } = this.state;
-
-
-
+	const handleRenderRow = (month, index) => {
+		const { selectedBackgroundColor, selectedTextColor, todayColor, ignoreMinDate, minDate, maxDate } = props;
 		if(availableDates && availableDates.length > 0){
 			availableDates = availableDates.filter(function(d){
 				if(d.indexOf(month) >= 0)
@@ -189,97 +119,155 @@ export default class RangeDatepicker extends Component {
 
 		return (
 			<Month
-				onSelectDate={this.onSelectDate}
+				onSelectDate={onSelectDate}
 				startDate={startDate}
 				untilDate={untilDate}
 				availableDates={availableDates}
-				minDate={minDate ? moment(minDate, 'YYYYMMDD') : minDate}
-				maxDate={maxDate ? moment(maxDate, 'YYYYMMDD') : maxDate}
+				minDate={minDate ? dayJsMod(minDate, 'YYYYMMDD') : minDate}
+				maxDate={maxDate ? dayJsMod(maxDate, 'YYYYMMDD') : maxDate}
 				ignoreMinDate={ignoreMinDate}
 				dayProps={{selectedBackgroundColor, selectedTextColor, todayColor}}
 				month={month} />
 		)
 	}
 
-	render(){
-			return (
-				<View style={{backgroundColor: '#fff', zIndex: 1000, alignSelf: 'center', width: '100%', flex: 1}}>
-					{
-						this.props.showClose || this.props.showReset ?
-							(<View style={{ flexDirection: 'row', justifyContent: "space-between", padding: 20, paddingBottom: 10}}>
-								{
-									this.props.showClose && <Text style={{fontSize: 20}} onPress={this.props.onClose}>Close</Text>
-								}
-								{
-									this.props.showReset && <Text style={{fontSize: 20}} onPress={this.onReset}>Reset</Text>
-								}
-							</View>)
-							:
-							null
-					}
-					{
-						this.props.showSelectionInfo ? 
-						(
-						<View style={{ flexDirection: 'row', justifyContent: "space-between", paddingHorizontal: 20, paddingBottom: 5, alignItems: 'center'}}>
-							<View style={{flex: 1}}>
-								<Text style={{fontSize: 34, color: '#666'}}>
-									{ this.state.startDate ? moment(this.state.startDate).format("MMM DD YYYY") : this.props.placeHolderStart}
-								</Text>
-							</View>
 
-							<View style={{}}>
-								<Text style={{fontSize: 80}}>
-									/
-								</Text>
-							</View>
-
-							<View style={{flex: 1}}>
-								<Text style={{fontSize: 34, color: '#666', textAlign: 'right'}}>
-									{ this.state.untilDate ? moment(this.state.untilDate).format("MMM DD YYYY") : this.props.placeHolderUntil}
-								</Text>
-							</View>
-						</View>
-						) : null
-					}
-					
-					{
-						this.props.infoText != "" &&
-						<View style={this.props.infoContainerStyle}>
-							<Text style={this.props.infoStyle}>{this.props.infoText}</Text>
-						</View>
-					}
-					<View style={styles.dayHeader}>
+	return (
+		<View style={{backgroundColor: '#fff', zIndex: 1000, alignSelf: 'center', width: '100%', flex: 1}}>
+			{
+				props.showClose || props.showReset ?
+					(<View style={{ flexDirection: 'row', justifyContent: "space-between", padding: 20, paddingBottom: 10}}>
 						{
-							this.props.dayHeadings.map((day, i) => {
-								return (<Text style={{width: "14.28%", textAlign: 'center'}} key={i}>{day}</Text>)
-							})
+							props.showClose && <Text style={{fontSize: 20}} onPress={props.onClose}>Close</Text>
 						}
+						{
+							props.showReset && <Text style={{fontSize: 20}} onPress={onReset}>Reset</Text>
+						}
+					</View>)
+					:
+					null
+			}
+			{
+				props.showSelectionInfo ? 
+				(
+				<View style={{ flexDirection: 'row', justifyContent: "space-between", paddingHorizontal: 20, paddingBottom: 5, alignItems: 'center'}}>
+					<View style={{flex: 1}}>
+						<Text style={{fontSize: 34, color: '#666'}}>
+							{ startDate ? dayJsMod(startDate).format("MMM DD YYYY") : props.placeHolderStart}
+						</Text>
 					</View>
-					<FlatList
-						style={{ flex: 1 }}
-			            data={this.getMonthStack()}
-			            renderItem={ ({item, index}) => { 
-							return this.handleRenderRow(item, index)
-						}}
-						keyExtractor = { (item, index) => index.toString() }
-			            showsVerticalScrollIndicator={false}
-					/>
 
-					{
-						this.props.showButton ? 
-						(
-						<View style={[styles.buttonWrapper, this.props.buttonContainerStyle]}>
-							<Button
-								title="Select Date" 
-								onPress={this.handleConfirmDate}
-								color={this.props.buttonColor} />
-						</View>
-						) : null
-					}	
+					<View style={{}}>
+						<Text style={{fontSize: 80}}>
+							/
+						</Text>
+					</View>
+
+					<View style={{flex: 1}}>
+						<Text style={{fontSize: 34, color: '#666', textAlign: 'right'}}>
+							{ untilDate ? dayJsMod(untilDate).format("MMM DD YYYY") : props.placeHolderUntil}
+						</Text>
+					</View>
 				</View>
-			)
-	}
+				) : null
+			}
+			
+			{
+				props.infoText != "" &&
+				<View style={props.infoContainerStyle}>
+					<Text style={props.infoStyle}>{props.infoText}</Text>
+				</View>
+			}
+			<View style={styles.dayHeader}>
+				{
+					props.dayHeadings.map((day, i) => {
+						return (<Text style={{width: "14.28%", textAlign: 'center'}} key={i}>{day}</Text>)
+					})
+				}
+			</View>
+			<FlatList
+				style={{ flex: 1 }}
+				data={getMonthStack()}
+				renderItem={ ({item, index}) => { 
+					return handleRenderRow(item, index)
+				}}
+				keyExtractor = { (item, index) => index.toString() }
+				showsVerticalScrollIndicator={false}
+			/>
+
+			{
+				props.showButton ? 
+				(
+				<View style={[styles.buttonWrapper, props.buttonContainerStyle]}>
+					<Button
+						title="Select Date" 
+						onPress={handleConfirmDate}
+						color={props.buttonColor} />
+				</View>
+				) : null
+			}	
+		</View>
+	)
 }
+
+RangeDatepicker.propTypes = {
+	initialMonth: PropTypes.string,
+	dayHeadings: PropTypes.arrayOf(PropTypes.string),
+	availableDates: PropTypes.arrayOf(PropTypes.string),
+	maxMonth: PropTypes.number,
+	buttonColor: PropTypes.string,
+	buttonContainerStyle: PropTypes.object,
+	startDate: PropTypes.string,
+	untilDate: PropTypes.string,
+	minDate: PropTypes.string,
+	maxDate: PropTypes.string,
+	showReset: PropTypes.bool,
+	showClose: PropTypes.bool,
+	ignoreMinDate: PropTypes.bool,
+    isHistorical: PropTypes.bool,
+	onClose: PropTypes.func,
+	onSelect: PropTypes.func,
+	onConfirm: PropTypes.func,
+	placeHolderStart: PropTypes.string,
+	placeHolderUntil: PropTypes.string,
+	selectedBackgroundColor: PropTypes.string,
+	selectedTextColor: PropTypes.string,
+	todayColor: PropTypes.string,
+	infoText: PropTypes.string,
+	infoStyle: PropTypes.object,
+	infoContainerStyle: PropTypes.object,
+	showSelectionInfo: PropTypes.bool,
+	showButton: PropTypes.bool,
+};
+  
+RangeDatepicker.defaultProps = {
+	initialMonth: '',
+	dayHeadings: ['S', 'M', 'T', 'W', 'T', 'F', 'S'],
+	maxMonth: 12,
+	buttonColor: 'green',
+	buttonContainerStyle: {},
+	showReset: true,
+	showClose: true,
+	ignoreMinDate: false,
+	isHistorical: false,
+	onClose: () => {},
+	onSelect: () => {},
+	onConfirm: () => {},
+	placeHolderStart: 'Start Date',
+	placeHolderUntil: 'Until Date',
+	selectedBackgroundColor: 'green',
+	selectedTextColor: 'white',
+	todayColor: 'green',
+	startDate: '',
+	untilDate: '',
+	minDate: '',
+	maxDate: '',
+	infoText: '',
+	infoStyle: {color: '#fff', fontSize: 13},
+	infoContainerStyle: {marginRight: 20, paddingHorizontal: 20, paddingVertical: 5, backgroundColor: 'green', borderRadius: 20, alignSelf: 'flex-end'},
+	showSelectionInfo: true,
+	showButton: true,
+};
 
 const styles = StyleSheet.create({
 	dayHeader : {
@@ -297,3 +285,5 @@ const styles = StyleSheet.create({
 		alignItems: 'stretch'
 	},
 });
+
+export default RangeDatepicker;

@@ -19,7 +19,7 @@
   "author": "Hanson Citra <hansoncitra@gmail.com>",
   "license": "ISC",
   "dependencies": {
-    "moment": "^2.17.1",
+    "dayjs": "^1.10.7",
     "prop-types": "^15.6.0"
   }
 }
