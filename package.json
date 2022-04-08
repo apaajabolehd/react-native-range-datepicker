@@ -1,6 +1,6 @@
 {
   "name": "react-native-range-datepicker",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "React native range datepicker (inspired by Airbnb Datepicker)",
   "main": "index.js",
   "scripts": {
