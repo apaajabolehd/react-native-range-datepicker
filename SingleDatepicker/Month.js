@@ -1,43 +1,43 @@
 'use strict'
-import React from 'react';
+import React, { memo } from 'react';
 import {
 	View,
-	StyleSheet,
-	ScrollView,
 	Text
 } from 'react-native';
 import DayRow from './DayRow'
-import moment from 'moment'
+import { dayJsMod } from '../helper';
 
-export default class Month extends React.Component {
-	constructor(props) {
-		super(props);
-	}
-
-	shouldComponentUpdate(nextProps, nextState) {
-
-		if(nextProps.minDate != this.props.minDate)
-			return true;
-
-		if(nextProps.maxDate != this.props.maxDate)
-			return true;
-
-		if(nextProps.availableDates != this.props.availableDates)
-			return true;
-
+const areEqual = (prevProps, nextProps) => {
+	if(nextProps.minDate != prevProps.minDate)
 		return false;
-	}
 
+	if(nextProps.maxDate != prevProps.maxDate)
+		return false;
 
-	getDayStack(month){
+	if(nextProps.availableDates != prevProps.availableDates)
+		return false;
+
+	if(nextProps.startDate != prevProps.startDate)
+		return false;
+
+	if(nextProps.untilDate != prevProps.untilDate)
+		return false;
+		
+	return true;
+}
+
+const Month = memo((props) => {
+	const { month, dayProps } = props;
+
+	const getDayStack = (month) => {
 		let res = [];
-		let currMonth = moment(month).month(); //get this month
-		let currDate = moment(month).startOf("month"); //get first day in this month
+		let currMonth = dayJsMod(month).month(); //get this month
+		let currDate = dayJsMod(month).startOf("month"); //get first day in this month
 
 		let dayColumn = [];
 		let dayRow = [];
 		let dayObject = {};
-		let {availableDates, minDate, maxDate} = this.props;
+		let {availableDates, minDate, maxDate} = props;
 
 		do{
 			dayColumn = [];
@@ -46,7 +46,7 @@ export default class Month extends React.Component {
 					type : null,
 					date: null
 				};
-				if(i == currDate.days() && currDate.month() == currMonth)
+				if(i == currDate.day() && currDate.month() == currMonth)
 				{
 					if(minDate && minDate.format("YYYYMMDD") && currDate.format("YYYYMMDD") < minDate.format("YYYYMMDD")){
 						dayObject.type = 'disabled';
@@ -60,7 +60,7 @@ export default class Month extends React.Component {
 					
 					dayObject.date = currDate.clone().format('YYYYMMDD');
 					dayColumn.push(dayObject);
-					currDate.add(1, 'day');
+					currDate = currDate.add(1, 'day');
 				}
 				else
 					dayColumn.push(dayObject);
@@ -72,22 +72,22 @@ export default class Month extends React.Component {
 		return dayRow;
 	}
 
-	render() {
-		const { month, dayProps } = this.props;
-		const dayStack = this.getDayStack(moment(month, 'YYYYMM'));
-		return (
+	const dayStack = getDayStack(dayJsMod(month, 'YYYYMM'));
+
+	return (
+		<View>
+			<Text style={{fontSize: 20, padding: 20}}>{dayJsMod(month, 'YYYYMM').format("MMMM YYYY")}</Text>
 			<View>
-				<Text style={{fontSize: 20, padding: 20}}>{moment(month, 'YYYYMM').format("MMMM YYYY")}</Text>
-				<View>
-					{
-						dayStack.map((days, i) => {
-							return (
-								<DayRow days={days} dayProps={dayProps} key={i} onSelectDate={this.props.onSelectDate}/>
-							)
-						})
-					}
-				</View>
+				{
+					dayStack.map((days, i) => {
+						return (
+							<DayRow days={days} dayProps={dayProps} key={i} onSelectDate={props.onSelectDate}/>
+						)
+					})
+				}
 			</View>
-		);
-	}
-}
+		</View>
+	);
+}, areEqual);
+
+export default Month;

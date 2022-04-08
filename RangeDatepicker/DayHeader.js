@@ -6,36 +6,29 @@ import {
     Text,
     View
 } from 'react-native';
-import moment from 'moment';
 
 const DEVICE_WIDTH = Dimensions.get('window').width;
 
-export default class DayHeader extends React.Component {
-    constructor(props) {
-        super(props);
-    }
-
-    render() {
-        const {
-            dayContainerOffset = 0,
-            dayHeaderContainerStyle,
-            dayHeaderStyle,
-            dayHeadings
-        } = this.props;
-        return (
-            <View style={[styles.dayHeader, dayHeaderContainerStyle]}>
-                {
-                    dayHeadings.map((day, i) => {
-                        return (
-                            <Text style={[ {textAlign: 'center'}, dayHeaderStyle, { width: (DEVICE_WIDTH / 7) - dayContainerOffset} ]} key={i}>
-                                {day}
-                            </Text>
-                        );
-                    })
-                }
-            </View>
-        );
-    }
+const DayHeader = (props) => {
+    const {
+        dayContainerOffset = 0,
+        dayHeaderContainerStyle,
+        dayHeaderStyle,
+        dayHeadings
+    } = props;
+    return (
+        <View style={[styles.dayHeader, dayHeaderContainerStyle]}>
+            {
+                dayHeadings.map((day, i) => {
+                    return (
+                        <Text style={[ {textAlign: 'center'}, dayHeaderStyle, { width: (DEVICE_WIDTH / 7) - dayContainerOffset} ]} key={i}>
+                            {day}
+                        </Text>
+                    );
+                })
+            }
+        </View>
+    );
 }
 
 const styles = StyleSheet.create({
@@ -46,3 +39,5 @@ const styles = StyleSheet.create({
         paddingTop: 10,
     }
 });
+
+export default DayHeader;
