@@ -10,12 +10,6 @@ import {
 import { dayJsMod } from '../helper';
 
 const DEVICE_WIDTH = Dimensions.get('window').width;
-const styles = StyleSheet.create({
-	invisibleStyle: {
-		backgroundColor : 'transparent',
-		position: 'relative'
-	}
-});
 
 const areEqual = (prevProps, nextProps) => {
 	if(nextProps.day.type != prevProps.day.type){
@@ -42,10 +36,10 @@ const Day = memo((props) => {
 		pointTextColor,
 		selectedBackgroundColor,
 		selectedTextColor,
-		dayContainerOffset = 0,
+		dayContainerOffset = 10,
 	} = dayProps;
 	
-	const side = Math.floor(DEVICE_WIDTH / 7);
+	const side = Math.floor(DEVICE_WIDTH / 7)+2;
 	const size = {
 		width: side,
 		height: side,
@@ -67,7 +61,7 @@ const Day = memo((props) => {
 		position: 'relative',
 		borderRadius: side - dayContainerOffset,
 	};
-
+	
 	const textDayStyle = { color: dayTextColor || 'black' };
 
 
@@ -149,8 +143,8 @@ const Day = memo((props) => {
 	else
 		return (
 			<TouchableWithoutFeedback activeOpacity={1}>
-				<View style={styles.invisibleStyle}>
-					<View style={[ styles.invisibleStyle, { ...size, justifyContent: 'center'} ]}>
+				<View style={dayWrapperStyle}>
+					<View style={{...dayStyle, ...size, justifyContent: 'center'}}>
 						<Text style={{ ...textDayStyle, textAlign: "center", backgroundColor: 'transparent', fontSize: Math.floor(DEVICE_WIDTH / 26)}}>{null}</Text>
 					</View>
 				</View>
