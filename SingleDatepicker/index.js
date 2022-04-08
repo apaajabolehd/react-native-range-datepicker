@@ -1,35 +1,80 @@
 'use strict'
-import React, { useEffect, useState } from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import {
   Text,
   View,
   FlatList,
   StyleSheet,
+  Dimensions
 } from 'react-native';
 import Month from './Month';
 // import styles from './styles';
-import { dayJsMod } from '../helper';
+import moment from 'moment';
 
-const SingleDatepicker = (props) => {
-	const [availableDates, setAvailableDates] = useState(props.availableDates || null)
+export default class RangeDatepicker extends Component {
+	constructor(props) {
+		super(props);
 
-	useEffect(() => {
-		setAvailableDates(props.availableDates);
-	}, [props.availableDates])
-	
-	
-	const onSelectDate = (date) => {
-		props.onSelect(date);
-		props.onClose();
+		this.state = {
+			availableDates: props.availableDates || null
+		}
+
+		this.onSelectDate = this.onSelectDate.bind(this);
+		this.handleRenderRow = this.handleRenderRow.bind(this);
 	}
 
-	const getMonthStack = () => {
+	static defaultProps = {
+		initialMonth: '',
+		dayHeadings: ['S', 'M', 'T', 'W', 'T', 'F', 'S'],
+		maxMonth: 12,
+		showClose: true,
+		onClose: () => {},
+		onSelect: () => {},
+		selectedBackgroundColor: 'green',
+		selectedTextColor: 'white',
+		todayColor: 'green',
+		minDate: '',
+		maxDate: '',
+		infoText: '',
+		infoStyle: {color: '#fff', fontSize: 13},
+		infoContainerStyle: {marginRight: 20, paddingHorizontal: 20, paddingVertical: 5, backgroundColor: 'green', borderRadius: 20, alignSelf: 'flex-end'},
+	};
+
+
+	static propTypes = {
+		initialMonth: PropTypes.string,
+		dayHeadings: PropTypes.arrayOf(PropTypes.string),
+		availableDates: PropTypes.arrayOf(PropTypes.string),
+		maxMonth: PropTypes.number,
+		minDate: PropTypes.string,
+		maxDate: PropTypes.string,
+		showClose: PropTypes.bool,
+		onClose: PropTypes.func,
+		onSelect: PropTypes.func,
+		selectedBackgroundColor: PropTypes.string,
+		selectedTextColor: PropTypes.string,
+		todayColor: PropTypes.string,
+		infoText: PropTypes.string,
+		infoStyle: PropTypes.object,
+		infoContainerStyle: PropTypes.object,
+	}
+
+	componentWillReceiveProps(nextProps) {
+		this.setState({availableDates: nextProps.availableDates});
+	}
+
+	onSelectDate(date){
+		this.props.onSelect(date);
+		this.props.onClose();
+	}
+
+	getMonthStack(){
 		let res = [];
-		const { maxMonth, initialMonth } = props;
-		let initMonth = dayJsMod();
+		const { maxMonth, initialMonth } = this.props;
+		let initMonth = moment();
 		if(initialMonth && initialMonth != '')
-			initMonth = dayJsMod(initialMonth, 'YYYYMM');
+			initMonth = moment(initialMonth, 'YYYYMM');
 
 		for(let i = 0; i < maxMonth; i++){
 			res.push(initMonth.clone().add(i, 'month').format('YYYYMM'));
@@ -38,8 +83,9 @@ const SingleDatepicker = (props) => {
 		return res;
 	}
 
-	const handleRenderRow = (month, index) => {
-		const { selectedBackgroundColor, selectedTextColor, todayColor, ignoreMinDate, minDate, maxDate } = props;
+	handleRenderRow(month, index) {
+		const { selectedBackgroundColor, selectedTextColor, todayColor, ignoreMinDate, minDate, maxDate } = this.props;
+		let { availableDates } = this.state;
 
 		if(availableDates && availableDates.length > 0){
 			availableDates = availableDates.filter(function(d){
@@ -50,87 +96,53 @@ const SingleDatepicker = (props) => {
 
 		return (
 			<Month
-				onSelectDate={onSelectDate}
+				onSelectDate={this.onSelectDate}
 				availableDates={availableDates}
-				minDate={minDate ? dayJsMod(minDate, 'YYYYMMDD') : minDate}
-				maxDate={maxDate ? dayJsMod(maxDate, 'YYYYMMDD') : maxDate}
+				minDate={minDate ? moment(minDate, 'YYYYMMDD') : minDate}
+				maxDate={maxDate ? moment(maxDate, 'YYYYMMDD') : maxDate}
 				ignoreMinDate={ignoreMinDate}
 				dayProps={{selectedBackgroundColor, selectedTextColor, todayColor}}
 				month={month} />
 		)
 	}
 
-	return (
-		<View style={{backgroundColor: '#fff', zIndex: 1000, alignSelf: 'center'}}>
-			{
-				props.showClose ?
-					(<View style={{ flexDirection: 'row', justifyContent: "space-between", padding: 20, paddingBottom: 10}}>
+	render(){
+			return (
+				<View style={{backgroundColor: '#fff', zIndex: 1000, alignSelf: 'center'}}>
+					{
+						this.props.showClose ?
+							(<View style={{ flexDirection: 'row', justifyContent: "space-between", padding: 20, paddingBottom: 10}}>
+								{
+									this.props.showClose && <Text style={{fontSize: 20}} onPress={this.props.onClose}>Close</Text>
+								}
+							</View>)
+							:
+							null
+					}
+					{
+						this.props.infoText != "" && 
+						<View style={this.props.infoContainerStyle}>
+							<Text style={this.props.infoStyle}>{this.props.infoText}</Text>
+						</View>
+					}
+					<View style={styles.dayHeader}>
 						{
-							props.showClose && <Text style={{fontSize: 20}} onPress={props.onClose}>Close</Text>
+							this.props.dayHeadings.map((day, i) => {
+								return (<Text style={{width: "14.28%", textAlign: 'center'}} key={i}>{day}</Text>)
+							})
 						}
-					</View>)
-					:
-					null
-			}
-			{
-				props.infoText != "" && 
-				<View style={props.infoContainerStyle}>
-					<Text style={props.infoStyle}>{props.infoText}</Text>
+					</View>
+					<FlatList
+			            data={this.getMonthStack()}
+			            renderItem={ ({item, index}) => { 
+							return this.handleRenderRow(item, index)
+						}}
+						keyExtractor = { (item, index) => index.toString() }
+			            showsVerticalScrollIndicator={false}
+						/>
 				</View>
-			}
-			<View style={styles.dayHeader}>
-				{
-					props.dayHeadings.map((day, i) => {
-						return (<Text style={{width: "14.28%", textAlign: 'center'}} key={i}>{day}</Text>)
-					})
-				}
-			</View>
-			<FlatList
-				data={getMonthStack()}
-				renderItem={ ({item, index}) => { 
-					return handleRenderRow(item, index)
-				}}
-				keyExtractor = { (item, index) => index.toString() }
-				showsVerticalScrollIndicator={false}
-				/>
-		</View>
-	)
-}
-
-SingleDatepicker.defaultProps = {
-	initialMonth: '',
-	dayHeadings: ['S', 'M', 'T', 'W', 'T', 'F', 'S'],
-	maxMonth: 12,
-	showClose: true,
-	onClose: () => {},
-	onSelect: () => {},
-	selectedBackgroundColor: 'green',
-	selectedTextColor: 'white',
-	todayColor: 'green',
-	minDate: '',
-	maxDate: '',
-	infoText: '',
-	infoStyle: {color: '#fff', fontSize: 13},
-	infoContainerStyle: {marginRight: 20, paddingHorizontal: 20, paddingVertical: 5, backgroundColor: 'green', borderRadius: 20, alignSelf: 'flex-end'},
-};
-
-
-SingleDatepicker.propTypes = {
-	initialMonth: PropTypes.string,
-	dayHeadings: PropTypes.arrayOf(PropTypes.string),
-	availableDates: PropTypes.arrayOf(PropTypes.string),
-	maxMonth: PropTypes.number,
-	minDate: PropTypes.string,
-	maxDate: PropTypes.string,
-	showClose: PropTypes.bool,
-	onClose: PropTypes.func,
-	onSelect: PropTypes.func,
-	selectedBackgroundColor: PropTypes.string,
-	selectedTextColor: PropTypes.string,
-	todayColor: PropTypes.string,
-	infoText: PropTypes.string,
-	infoStyle: PropTypes.object,
-	infoContainerStyle: PropTypes.object,
+			)
+	}
 }
 
 const styles = StyleSheet.create({
@@ -149,5 +161,3 @@ const styles = StyleSheet.create({
 		alignItems: 'stretch'
 	},
 });
-
-export default SingleDatepicker;

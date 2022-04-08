@@ -1,22 +1,33 @@
 'use strict'
-import React, { memo } from 'react';
+import React from 'react';
 import {
 	View
 } from 'react-native';
 import Day from './Day';
 
-const DayRow = (props) => {
-	return (
-		<View style={{ marginBottom: 2, marginTop: 2, flexDirection: 'row', justifyContent: 'space-evenly', flex: 1}}>
-			{
-				props.days.map((day, i) => {
-					return (
-						<Day key={i} dayProps={props.dayProps} onSelectDate={props.onSelectDate} day={day}/>
-					)
-				})
-			}
-		</View>
-	);
-}
+export default class DayRow extends React.Component {
+	constructor(props) {
+		super(props);
+	}
 
-export default DayRow;
+	shouldComponentUpdate(nextProps, nextState) {
+		if(JSON.stringify(nextProps.days) == JSON.stringify(this.props.days))
+			return false;
+
+		return true;
+	}
+
+	render() {
+		return (
+			<View style={{ marginBottom: 2, marginTop: 2, flexDirection: 'row', justifyContent: 'space-evenly', flex: 1}}>
+				{
+					this.props.days.map((day, i) => {
+						return (
+							<Day key={i} dayProps={this.props.dayProps} onSelectDate={this.props.onSelectDate} day={day}/>
+						)
+					})
+				}
+			</View>
+		);
+	}
+}
